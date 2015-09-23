@@ -1,0 +1,12 @@
+==CONSOLE OUTPUT==
+
+Original shape: Circle center: (300,200)  radius: 75.0 has area: 17671.458676442588
+Shape after move: Circle center: (295,165)  radius: 75.0
+Shape after scale: Circle center: (295,165)  radius: 150.0
+Original shape: Rectangle upper left corner: (100,200)  width: 50.0 height: 75.0 has area: 3750.0
+Shape after move: Rectangle upper left corner: (95,165)  width: 50.0 height: 75.0
+Shape after scale: Rectangle upper left corner: (95,165)  width: 100.0 height: 150.0
+Rectangle after flip: Rectangle upper left corner: (95,165)  width: 150.0 height: 100.0
+Original shape: Triangle with vertices (25, 50), (125, 50), (45, 70) has area: 1000.0
+Shape after move: Triangle with vertices (20, 15), (120, 15), (40, 35)
+Shape after scale: Triangle with vertices (20, 15), (220, 15), (40, 55)

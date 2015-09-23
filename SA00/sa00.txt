@@ -1,0 +1,21 @@
+==MYSTER PROGRAM==
+
+When I ran the Mystery program, the following things occurred:
+
+1. I was asked to enter my name in the console, and then press enter
+2. A window opened, with…
+	- A bunch of ellipses of varying colors.
+	- Each ellipse said “Welcome to CS 10” on the inside.
+	- The window was titled “Close this window to exit, Ezekiel”
+3. I closed the window and the program ended
+
+==QUESTIONS==
+
+1. My name is Ezekiel Elin, I am a Senior at Hanover High School, and I live here in Hanover, NH
+2. I scored a 5 on the AP
+3. Eventually I am planning on a CS Major, when I start college
+4. I want to get the most out of my educational years at high school and college. CS10 seemed like the right fit.
+5. I use a Mac running OS X 10.11 El Capitan*.
+6. I am hard of hearing, which I will be following up with at the necessary departments. However provided I am within ample distance of the person speaking that is not an issue. It was not an issue today (Wednesday).
+
+* While El Capitan has not been publicly released, I am NOT running a beta operating system. The build currently on my computer is a release candidate to be released within the next few weeks. I do however understand that some things may not work on my computer as expected, and I am aware it is up to me to resolve those issues that occur due to El Capitan (prior to public release).
