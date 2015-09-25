@@ -1,0 +1,6 @@
+==CONSOLE OUTPUT==
+
+Mom's savings. Account balance: 8040.0
+The college fund. Account balance: 9069.5
+Harry's checking. Account balance: 1999.0
+Harry's ATM Savings. Balance: 4941.6
