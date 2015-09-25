@@ -1,0 +1,28 @@
+After adding 20 shapes:
+Circle center: (145,45)  radius: 24.834803656930116
+Rectangle upper left corner: (2,35)  width: 29.0 height: 22.0
+Circle center: (10,117)  radius: 1.254865735763211
+Circle center: (9,74)  radius: 58.85213517775154
+Circle center: (143,125)  radius: 27.430134553708964
+Circle center: (196,17)  radius: 61.746345011271075
+Rectangle upper left corner: (52,50)  width: 49.0 height: 52.0
+Rectangle upper left corner: (2,48)  width: 134.0 height: 100.0
+Rectangle upper left corner: (145,57)  width: 27.0 height: 9.0
+Rectangle upper left corner: (39,12)  width: 35.0 height: 87.0
+Rectangle upper left corner: (118,54)  width: 37.0 height: 51.0
+Rectangle upper left corner: (28,8)  width: 159.0 height: 101.0
+Rectangle upper left corner: (23,29)  width: 96.0 height: 26.0
+Rectangle upper left corner: (154,46)  width: 26.0 height: 60.0
+Circle center: (106,39)  radius: 58.85829453562735
+Rectangle upper left corner: (9,18)  width: 128.0 height: 39.0
+Rectangle upper left corner: (106,25)  width: 48.0 height: 81.0
+Circle center: (125,73)  radius: 65.49718848230248
+Circle center: (3,74)  radius: 17.24580570541663
+Rectangle upper left corner: (143,45)  width: 25.0 height: 60.0
+Enter x y coordinates, seperated by a space: 10 120
+Found object at index 3: Circle center: (9,74)  radius: 58.85213517775154
+Enter x y coordinates, seperated by a space: 10 120
+Found object at index 6: Rectangle upper left corner: (2,48)  width: 134.0 height: 100.0
+Enter x y coordinates, seperated by a space: 10 120
+No object contains point: (10,120)
+Enter x y coordinates, seperated by a space:

@@ -1,9 +1,9 @@
 /**
  *  Circle.java
- *  
+ *
  *  Simple circle object
  *  Based on a C++ demo by THC
- *  
+ *
  *  @author Scot Drysdale on 4/5/00, modified 1/7/2012
  */
 
@@ -25,7 +25,7 @@ public class Circle implements GeomShape {
 
   /**
    * Moves Circle by deltaX, deltaY.
-   * 
+   *
    * @param deltaX the amount to move in the x direction
    * @param deltaY the amount to move in the y direction
    */
@@ -36,7 +36,7 @@ public class Circle implements GeomShape {
 
   /**
    * Scales the circle by factor
-   * 
+   *
    * @param factor the scaling factor
    */
   public void scale(double factor) {
@@ -49,11 +49,20 @@ public class Circle implements GeomShape {
   public double areaOf() {
     return Math.PI * myRadius * myRadius;
   }
-  
+
   /**
    * @return A string representation of the circle
    */
   public String toString() {
     return "Circle center: (" + myX + "," + myY + ")  radius: " + myRadius;
+  }
+
+  public boolean containsPoint(int x, int y) {
+      //Check if the distance from the center is less than the radius of the circle
+      if ((x - myX) * (x - myX) + (y - myY) * (y - myY) <= myRadius * myRadius) {
+          return true; //Return true if it is - the point is inside the circle
+      } else {
+          return false; //Return false if it isn't - the point is outside the circle
+      }
   }
 }
