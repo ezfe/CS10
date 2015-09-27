@@ -2,7 +2,7 @@
  * Checkerboard.java
  *
  * Starting point for a Short Assignment.
- * Draws a checkerboard with black and red squares. 
+ * Draws a checkerboard with black and red squares.
  * @author Tom Cormen.  Converted to JApplet by Scot Drysdale
  */
 
@@ -35,7 +35,7 @@ public class Checkerboard extends JApplet {
 
 		/**
 		 * Paints the checkerboard.
-		 * 
+		 *
 		 * @param page the Graphics object that we draw on.
 		 */
 		public void paintComponent(Graphics page) {
@@ -47,7 +47,7 @@ public class Checkerboard extends JApplet {
 
 		/**
 		 * Draw the entire checkerboard in black and red.
-		 * 
+		 *
 		 * @param page the graphics object to draw on
 		 */
 		public void drawCheckerboard(Graphics page) {
@@ -70,7 +70,7 @@ public class Checkerboard extends JApplet {
 		/**
 		 * Draw a given square of the checkerboard. Row and column numbers start
 		 * from 0.
-		 * 
+		 *
 		 * @param page graphics object to draw on
 		 * @param row the row number of the square
 		 * @param column the column number of the square
