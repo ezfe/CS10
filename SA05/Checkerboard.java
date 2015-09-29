@@ -8,11 +8,17 @@
 
 import javax.swing.*;
 import java.awt.*;
+import java.awt.event.*;
 
-public class Checkerboard extends JApplet {
+public class Checkerboard extends JApplet implements MouseListener, ActionListener {
 	private static final long serialVersionUID = 1L;
 	private final int DIMENSION = 8;		// want 8 x 8 board
-  private final int SQUARE_SIZE = 30; // each square is 30 x 30 pixels
+    private final int SQUARE_SIZE = 30; // each square is 30 x 30 pixels
+
+    //Store the last mouse click point
+    private Point clickPoint = null;
+    private boolean isAlternate = false;
+    private static int FREQUENCY = 500;
 
 	/**
 	 * Set up the canvas.
@@ -25,6 +31,11 @@ public class Checkerboard extends JApplet {
 		cp.add(new Canvas());               // the canvas is the only component
 
 		setVisible(true);   // makes the applet (and its components) visible
+
+        Timer t = new Timer(FREQUENCY, this);
+        t.start();
+
+        addMouseListener(this);
 	}
 
 	/**
@@ -62,6 +73,15 @@ public class Checkerboard extends JApplet {
 					else
 						squareColor = Color.red;
 
+                    //Check if should flash, and check that a clickPoint exists
+                    if (isAlternate && clickPoint != null) {
+                        //Compare the clickPoint to the column,row. Divide by SQUARE_SIZE to get the correct magnitude
+                        if (column == clickPoint.x / SQUARE_SIZE && row == clickPoint.y / SQUARE_SIZE) {
+                            //Color the tile yellow instead
+                            squareColor = Color.yellow;
+                        }
+                    }
+
 					drawSquare(page, row, column, squareColor);
 				}
 			}
@@ -82,4 +102,25 @@ public class Checkerboard extends JApplet {
 					SQUARE_SIZE);
 		}
 	}
+
+    //When the user clicks
+    public void mouseClicked(MouseEvent event) {
+        //Set the clickpoint
+        clickPoint = event.getPoint(); //Set the click point so that we can use it to control the tile color
+        repaint();
+    }
+
+    //Unused methods
+    public void mouseExited(MouseEvent event) {}
+    public void mouseEntered(MouseEvent event) {}
+    public void mouseReleased(MouseEvent event) {}
+    public void mousePressed(MouseEvent event) {}
+
+    //Whenever the timer wants to bother us,
+    public void actionPerformed(ActionEvent e) {
+        //Toggle the alternate color
+        isAlternate = !isAlternate;
+        //Repaint the tiles
+        repaint();
+    }
 }
