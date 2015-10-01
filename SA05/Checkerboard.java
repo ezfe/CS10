@@ -3,7 +3,7 @@
  *
  * Starting point for a Short Assignment.
  * Draws a checkerboard with black and red squares.
- * @author Tom Cormen.  Converted to JApplet by Scot Drysdale
+ * @author Tom Cormen.  Converted to JApplet by Scot Drysdale. Adapted for SA05 by Ezekiel Elin on September 30, 2015
  */
 
 import javax.swing.*;
@@ -15,10 +15,9 @@ public class Checkerboard extends JApplet implements MouseListener, ActionListen
 	private final int DIMENSION = 8;		// want 8 x 8 board
     private final int SQUARE_SIZE = 30; // each square is 30 x 30 pixels
 
-    //Store the last mouse click point
-    private Point clickPoint = null;
-    private boolean isAlternate = false;
-    private static int FREQUENCY = 500;
+    private Point clickPoint = null; //Store the last mouse click point
+    private boolean isAlternate = false; //Control the highlighting of the tile (yellow versus regular color)
+    private static int FREQUENCY = 500; //Frequency of flashing (isAlternate toggling)
 
 	/**
 	 * Set up the canvas.
@@ -32,9 +31,11 @@ public class Checkerboard extends JApplet implements MouseListener, ActionListen
 
 		setVisible(true);   // makes the applet (and its components) visible
 
+        //Set up the timer and start it
         Timer t = new Timer(FREQUENCY, this);
         t.start();
 
+        //Configure mouse listener
         addMouseListener(this);
 	}
 
