@@ -1,6 +1,7 @@
 import java.awt.Color;
 import java.awt.Graphics;
 import java.awt.Point;
+import java.util.ArrayList;
 
 /**
 * SentinelDLLDrawing.java
@@ -16,6 +17,8 @@ import java.awt.Point;
 */
 public class SentinelDLLDrawing extends Drawing {
     private SentinelDLL<Shape> shapes;    // the ordered list of Shape objects
+
+    private ArrayList<PointShape> selectedCache;
 
     /**
     * Constructor creates an empty list of Shape objects and
@@ -34,6 +37,7 @@ public class SentinelDLLDrawing extends Drawing {
     * @params c a shape you wish to add to the drawing
     */
     public void add(Shape s) {
+        selectedCache = null;
         shapes.addLast(s);
     }
 
@@ -45,7 +49,7 @@ public class SentinelDLLDrawing extends Drawing {
     * @params page the page you wish to draw the shapes on
     */
     public void draw(Graphics page) {
-        for (Shape s = shapes.getFirst(); shapes.hasCurrent(); s = shapes.next()) {
+        for (Shape s = shapes.getFirst(); s != null; s = shapes.next()) {
             s.draw(page);
         }
     }
@@ -58,7 +62,10 @@ public class SentinelDLLDrawing extends Drawing {
     * @return the front most shape or null if no shape is found
     */
     public Shape getFrontmostContainer(Point p) {
-        return new Rect(0, 0, 10, 10, Color.red);
+        for (Shape s = shapes.getLast(); s != null; s = shapes.previous()) {
+            if (s.containsPoint(p)) return s;
+        }
+        return null;
     }
 
     /**
@@ -67,7 +74,9 @@ public class SentinelDLLDrawing extends Drawing {
     * @params s the which you wish to remove from the drawing
     */
     public void remove(Shape rS) {
-        for (Shape s = shapes.getFirst(); shapes.hasCurrent(); s = shapes.next()) {
+        selectedCache = null;
+        if (rS == null) return;
+        for (Shape s = shapes.getFirst(); s != null; s = shapes.next()) {
             if (s == rS) {
                 shapes.remove();
             }
@@ -81,12 +90,12 @@ public class SentinelDLLDrawing extends Drawing {
     * @param s the shape which you wish to move to the front
     */
     public void moveToFront(Shape rS) {
-        for (Shape s = shapes.getFirst(); shapes.hasCurrent(); s = shapes.next()) {
+        for (Shape s = shapes.getFirst(); s != null; s = shapes.next()) {
             if (s == rS) {
                 shapes.remove();
             }
         }
-        shapes.addFirst(rS);
+        shapes.addLast(rS);
     }
 
     /**
@@ -96,12 +105,12 @@ public class SentinelDLLDrawing extends Drawing {
     * @param s the shape which you wish to move to the back
     */
     public void moveToBack(Shape rS) {
-        for (Shape s = shapes.getFirst(); shapes.hasCurrent(); s = shapes.next()) {
+        for (Shape s = shapes.getFirst(); s != null; s = shapes.next()) {
             if (s == rS) {
                 shapes.remove();
             }
         }
-        shapes.addLast(rS);
+        shapes.addFirst(rS);
     }
 
 
@@ -111,6 +120,26 @@ public class SentinelDLLDrawing extends Drawing {
     * @param s the shape you wish to replace the frontmost shape with
     */
     public void replaceFront(Shape s) {
-        // YOU FILL THIS IN.
+        shapes.getFirst();
+        shapes.remove();
+        shapes.addFirst(s);
+    }
+
+    public ArrayList<PointShape> getSelected() {
+        if (selectedCache != null) return selectedCache;
+
+        ArrayList<PointShape> sShapes = new ArrayList<PointShape>();
+
+        for (Shape s = shapes.getFirst(); s != null; s = shapes.next()) {
+            if (s.isSelected()) {
+                sShapes.add((PointShape)s);
+            }
+        }
+        selectedCache = sShapes;
+        return sShapes;
+    }
+
+    public void invalidateSelectCache() {
+        selectedCache = null;
     }
 }

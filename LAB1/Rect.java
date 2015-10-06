@@ -23,5 +23,9 @@ public class Rect extends PointShape {
 
     public void drawShape(Graphics g) {
         g.fillRect(x, y, width, height);
+        if (this.isSelected()) {
+            g.setColor(Color.black);
+            g.drawRect(x, y, width, height);
+        }
     }
 }

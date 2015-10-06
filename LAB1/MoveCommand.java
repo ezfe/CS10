@@ -7,6 +7,7 @@
 */
 
 import java.awt.*;
+import java.util.ArrayList;
 
 public class MoveCommand extends Command {
     private PointShape s = null; //Current object
@@ -15,11 +16,21 @@ public class MoveCommand extends Command {
     public void executePress(Point p, Drawing dwg) {
         s = (PointShape)dwg.getFrontmostContainer(p); //Set s
         pt = p; //Set pt
+        dwg.invalidateSelectCache();
     }
 
     public void executeDrag(Point p, Drawing dwg) {
         if (s != null && pt != null) {
-            s.move(p.x - pt.x, p.y - pt.y); //Move the current object s by DeltaX, DeltaY
+            if (s.isSelected()) {
+                ArrayList<PointShape> selectedShapes = dwg.getSelected();
+                if (selectedShapes == null) return;
+                for (int i = 0; i < selectedShapes.size(); i++) {
+                    PointShape s = selectedShapes.get(i);
+                    s.move(p.x - pt.x, p.y - pt.y); //Move the current object s by DeltaX, DeltaY
+                }
+            } else {
+                s.move(p.x - pt.x, p.y - pt.y); //Move the current object s by DeltaX, DeltaY
+            }
         }
         pt = p; //Update pt
     }

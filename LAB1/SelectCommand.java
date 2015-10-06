@@ -1,17 +1,17 @@
 /**
- * DeleteCommand.java
+ * SelectCommand.java
  *
- * Subclass of Command for deleting
+ * Subclass of Command for toggling selection
  *
  * @author Ezekiel Elin
  */
 
 import java.awt.*;
 
- public class DeleteCommand extends Command {
+ public class SelectCommand extends Command {
     public void executeClick(Point p, Drawing dwg) {
         Shape s = dwg.getFrontmostContainer(p);
         if (s == null) return;
-        dwg.remove(s);
+        s.toggleSelection();
     }
  }

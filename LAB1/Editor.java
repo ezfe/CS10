@@ -48,6 +48,7 @@ public class Editor extends JApplet {
         JButton frontButton = new JButton("Front");
         JButton backButton = new JButton("Back");
         JButton exchangeButton = new JButton("Exchange");
+        JButton selectButton = new JButton("Select");
         JButton redButton = new JButton("Red");
         JButton greenButton = new JButton("Green");
         JButton blueButton = new JButton("Blue");
@@ -61,6 +62,7 @@ public class Editor extends JApplet {
         frontButton.addActionListener(new FrontButtonListener());
         backButton.addActionListener(new BackButtonListener());
         exchangeButton.addActionListener(new ExchangeButtonListener());
+        selectButton.addActionListener(new SelectButtonListener());
         redButton.addActionListener(new RedButtonListener());
         greenButton.addActionListener(new GreenButtonListener());
         blueButton.addActionListener(new BlueButtonListener());
@@ -93,6 +95,7 @@ public class Editor extends JApplet {
         editPanel.add(frontButton);
         editPanel.add(backButton);
         editPanel.add(exchangeButton);
+        editPanel.add(selectButton);
 
         // The color panel is slightly different from the other two. In
         // addition to a label and buttons for the color commands, this
@@ -215,12 +218,23 @@ public class Editor extends JApplet {
     }
 
     /**
+    * What to do when selectButton is pressed.
+    */
+    private class SelectButtonListener implements ActionListener {
+        public void actionPerformed(ActionEvent event) {
+            cmd = new SelectCommand();
+            repaint();
+        }
+    }
+
+    /**
     * What to do when redButton is pressed.
     */
     private class RedButtonListener implements ActionListener {
         public void actionPerformed(ActionEvent event) {
             colorBox.show(Color.red); // show that the new default color is red
             dwg.setColor(Color.red);
+            cmd = new ColorCommand(Color.red);
             repaint();
         }
     }
@@ -232,6 +246,7 @@ public class Editor extends JApplet {
         public void actionPerformed(ActionEvent event) {
             colorBox.show(Color.green); // show that the new default color is green
             dwg.setColor(Color.green);
+            cmd = new ColorCommand(Color.green);
             repaint();
         }
     }
@@ -243,6 +258,7 @@ public class Editor extends JApplet {
         public void actionPerformed(ActionEvent event) {
             colorBox.show(Color.blue); // show that the new default color is blue
             dwg.setColor(Color.blue);
+            cmd = new ColorCommand(Color.blue);
             repaint();
         }
     }

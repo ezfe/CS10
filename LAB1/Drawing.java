@@ -1,6 +1,7 @@
 import java.awt.Color;
 import java.awt.Graphics;
 import java.awt.Point;
+import java.util.ArrayList;
 
 /**
 * Drawing.java
@@ -100,4 +101,7 @@ public abstract class Drawing {
     * @param s the shape you wish to replace the frontmost shape with
     */
     public abstract void replaceFront(Shape s);
+
+    public abstract ArrayList<PointShape> getSelected();
+    public abstract void invalidateSelectCache();
 }

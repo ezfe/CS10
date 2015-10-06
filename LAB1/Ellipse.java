@@ -34,5 +34,9 @@ public class Ellipse extends PointShape {
 
     public void drawShape(Graphics g) {
         g.fillOval(x, y, width, height);
+        if (this.isSelected()) {
+            g.setColor(Color.black);
+            g.drawOval(x, y, width, height);
+        }
     }
 }

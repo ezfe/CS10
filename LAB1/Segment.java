@@ -86,6 +86,9 @@ public class Segment extends PointShape {
     }
 
     public void drawShape(Graphics g) {
+        if (this.isSelected()) {
+            g.setColor(Color.black);
+        }
         if (isReversed()) {
             //Draw the reversed line
             g.drawLine((x + width), y, x, (y + height));

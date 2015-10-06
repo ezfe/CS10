@@ -11,6 +11,8 @@ import java.awt.*;
 */
 public abstract class Shape {
     private Color color; // Shape's color
+    private boolean selected = false;
+
 
     /**
     * Have the Shape draw itself.
@@ -78,5 +80,17 @@ public abstract class Shape {
     public void setCenter(Point newCenter) {
         Point oldCenter = getCenter();
         move(newCenter.x - oldCenter.x, newCenter.y - oldCenter.y);
+    }
+
+    public void select() {
+        selected = true;
+    }
+
+    public boolean isSelected() {
+        return selected;
+    }
+
+    public void toggleSelection() {
+        selected = !selected;
     }
 }
