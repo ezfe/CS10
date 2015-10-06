@@ -33,7 +33,7 @@ public class Editor extends JApplet {
         // references an ArrayListDrawing. You should change it to reference
         // a subclass of Drawing that uses a circular, doubly linked list
         // with a sentinel.
-        dwg = new ArrayListDrawing(initialColor);	// make an empty drawing
+        dwg = new SentinelDLLDrawing(initialColor);	// make an empty drawing
 
         // The drawing will appear in a white CanvasPanel.
         CanvasPanel canvasPanel = new CanvasPanel();
@@ -189,7 +189,7 @@ public class Editor extends JApplet {
     */
     private class FrontButtonListener implements ActionListener {
         public void actionPerformed(ActionEvent event) {
-            // YOU FILL THIS IN.
+            cmd = new MoveFrontCommand();
             repaint();
         }
     }
@@ -199,7 +199,7 @@ public class Editor extends JApplet {
     */
     private class BackButtonListener implements ActionListener {
         public void actionPerformed(ActionEvent event) {
-            // YOU FILL THIS IN.
+            cmd = new MoveBackCommand();
             repaint();
         }
     }
