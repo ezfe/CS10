@@ -1,0 +1,35 @@
+1:
+	Click Button “Red”
+	Click Button “Rectangle”
+	Drag to create rectangle
+
+	Click Button “Green”
+	Click Button “Ellipse”
+	Drag to create ellipse
+
+	Click Button “Blue”
+	Click Button “Line”
+	Drag to create line segment
+
+	Drag to create second line segment
+
+2:
+	Click Button “Move”
+	Drag first line segment
+
+3:
+	Click Button “Delete”
+	Click line segment
+4:
+	Drag line segment
+	Drag ellipse
+5:
+	Click Button “Back”
+	Click ellipse
+6:
+	Click Button “Front”
+	Click ellipse
+7:
+	Click Button “Green”
+	Click rectangle
+
