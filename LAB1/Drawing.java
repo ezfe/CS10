@@ -104,4 +104,7 @@ public abstract class Drawing {
 
     public abstract ArrayList<PointShape> getSelected();
     public abstract void invalidateSelectCache();
+
+    public abstract void recordHistoryItem(HistoryAction h);
+    public abstract void undo();
 }

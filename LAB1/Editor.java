@@ -49,6 +49,7 @@ public class Editor extends JApplet {
         JButton backButton = new JButton("Back");
         JButton exchangeButton = new JButton("Exchange");
         JButton selectButton = new JButton("Select");
+        JButton undoButton = new JButton("Undo");
         JButton redButton = new JButton("Red");
         JButton greenButton = new JButton("Green");
         JButton blueButton = new JButton("Blue");
@@ -62,6 +63,7 @@ public class Editor extends JApplet {
         frontButton.addActionListener(new FrontButtonListener());
         backButton.addActionListener(new BackButtonListener());
         exchangeButton.addActionListener(new ExchangeButtonListener());
+        undoButton.addActionListener(new UndoButtonListener());
         selectButton.addActionListener(new SelectButtonListener());
         redButton.addActionListener(new RedButtonListener());
         greenButton.addActionListener(new GreenButtonListener());
@@ -85,17 +87,18 @@ public class Editor extends JApplet {
         JLabel editLabel = new JLabel("Edit:");
         editPanel.setLayout(new FlowLayout());
         editPanel.add(editLabel);
-        moveButton.setBackground(Color.yellow);
-        deleteButton.setBackground(Color.yellow);
-        frontButton.setBackground(Color.yellow);
-        backButton.setBackground(Color.yellow);
-        exchangeButton.setBackground(Color.yellow);
+        // moveButton.setBackground(Color.yellow);
+        // deleteButton.setBackground(Color.yellow);
+        // frontButton.setBackground(Color.yellow);
+        // backButton.setBackground(Color.yellow);
+        // exchangeButton.setBackground(Color.yellow);
         editPanel.add(moveButton);
         editPanel.add(deleteButton);
         editPanel.add(frontButton);
         editPanel.add(backButton);
         editPanel.add(exchangeButton);
         editPanel.add(selectButton);
+        editPanel.add(undoButton);
 
         // The color panel is slightly different from the other two. In
         // addition to a label and buttons for the color commands, this
@@ -223,6 +226,16 @@ public class Editor extends JApplet {
     private class SelectButtonListener implements ActionListener {
         public void actionPerformed(ActionEvent event) {
             cmd = new SelectCommand();
+            repaint();
+        }
+    }
+
+    /**
+    * What to do when undoButton is pressed.
+    */
+    private class UndoButtonListener implements ActionListener {
+        public void actionPerformed(ActionEvent event) {
+            dwg.undo();
             repaint();
         }
     }

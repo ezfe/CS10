@@ -93,4 +93,8 @@ public abstract class Shape {
     public void toggleSelection() {
         selected = !selected;
     }
+
+    public Color getColor() {
+        return color;
+    }
 }

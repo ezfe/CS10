@@ -7,6 +7,7 @@
  *
  * @author Scot Drysdale on 4/19/00.  Modified to a JApplet 1/16/2012
  * Modified to add a "clear" button and use an ArrayList on 1/18/2012
+ * @author Ezekiel Elin. Delete clicked Rects
  */
 import javax.swing.*;
 import java.awt.*;

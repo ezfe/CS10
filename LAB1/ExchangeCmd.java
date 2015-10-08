@@ -34,6 +34,10 @@ public class ExchangeCmd extends Command {
         Point firstCenter = firstShape.getCenter();
         Point secondCenter = s.getCenter();
 
+        dwg.recordHistoryItem(new HistoryAction((PointShape)firstShape));
+        dwg.recordHistoryItem(new HistoryAction((PointShape)s));
+
+
         // Exchange their centers.
         firstShape.setCenter(secondCenter);
         s.setCenter(firstCenter);

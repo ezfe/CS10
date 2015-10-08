@@ -4,6 +4,7 @@
  * Represents a rectangle and allows various operations, including drawing
  *
  * @author Scot Drysdale on 4/9/00.  Modified on 4/14/00 to add additional methods.
+ * @author Ezekiel Elin. Added containsPoint() method
  */
 import java.awt.*;
 
@@ -141,7 +142,7 @@ public class Rect {
      * @return wether the rect contains the passed point
      */
     public boolean containsPoint(Point p) {
-        if (myX < p.x && myWidth + myX > p.x) {
+        if (myX < p.x && myWidth + myX > p.x && myY < p.y && myHeight + myY > p.y) {
             return true;
         } else {
             return false;

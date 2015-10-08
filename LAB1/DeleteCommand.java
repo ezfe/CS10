@@ -12,6 +12,7 @@ import java.awt.*;
     public void executeClick(Point p, Drawing dwg) {
         Shape s = dwg.getFrontmostContainer(p);
         if (s == null) return;
+        dwg.recordHistoryItem(new HistoryAction((PointShape)s, true));
         dwg.remove(s);
     }
  }

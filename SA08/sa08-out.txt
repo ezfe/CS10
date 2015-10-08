@@ -1,0 +1,24 @@
+Is it empty? : true
+Is it empty? : false
+Front is: cat
+Next front is: dog
+Is it empty? : false
+Next front is: bee
+Next front is: eagle
+Is it empty? : true
+dequeue of empty stack: null
+front is: bear
+Bigger example:
+front is: beaver
+Next front is: cat
+Next front is: dog
+Next front is: sheep
+Next front is: cow
+Next front is: eagle
+Next front is: bee
+Next front is: lion
+Next front is: tiger
+Next front is: zebra
+Next front is: ant
+Is it empty? : true
+Next front is: null

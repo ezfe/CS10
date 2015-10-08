@@ -19,6 +19,7 @@ public class SentinelDLLDrawing extends Drawing {
     private SentinelDLL<Shape> shapes;    // the ordered list of Shape objects
 
     private ArrayList<PointShape> selectedCache;
+    private ArrayList<HistoryAction> history = new ArrayList<HistoryAction>();
 
     /**
     * Constructor creates an empty list of Shape objects and
@@ -141,5 +142,20 @@ public class SentinelDLLDrawing extends Drawing {
 
     public void invalidateSelectCache() {
         selectedCache = null;
+    }
+
+    public void undo() {
+        System.out.println("Undoing...");
+        if (history.size() == 0) {
+            System.out.println("Nothing to undo");
+            return;
+        }
+        HistoryAction a = history.get(history.size() - 1);
+        history.remove(history.size() - 1);
+        a.restore();
+    }
+
+    public void recordHistoryItem(HistoryAction a) {
+        history.add(a);
     }
 }

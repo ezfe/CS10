@@ -15,8 +15,10 @@ public class MoveCommand extends Command {
 
     public void executePress(Point p, Drawing dwg) {
         s = (PointShape)dwg.getFrontmostContainer(p); //Set s
+        if (s == null) return;
         pt = p; //Set pt
         dwg.invalidateSelectCache();
+        dwg.recordHistoryItem(new HistoryAction(s));
     }
 
     public void executeDrag(Point p, Drawing dwg) {
