@@ -15,10 +15,11 @@ import java.util.ArrayList;
 * Written by THC for CS 10 Lab Assignment 1.
 *
 * @author Tom Cormen
+* @author Ezekiel Elin added some new methods for history and multi-selection (October 8, 2015)
 */
 
 public abstract class Drawing {
-    private Color currentColor;         // current default color
+    private Color currentColor; // current default color
 
     /**
     * Constructor, sets the current color.
@@ -102,9 +103,25 @@ public abstract class Drawing {
     */
     public abstract void replaceFront(Shape s);
 
+    /**
+     * Get a list of selected items
+     * @return ArrayList<PointShape> of selected items
+     */
     public abstract ArrayList<PointShape> getSelected();
+
+    /**
+     * Notify the drawing that it should refresh the list of selected items
+     */
     public abstract void invalidateSelectCache();
 
+    /**
+     * Record history, for future undoing
+     * @param h Instance of HistoryAction
+     */
     public abstract void recordHistoryItem(HistoryAction h);
+
+    /**
+     * Request that the drawing revert one step in history. May not cause anything to occur if history is empty
+     */
     public abstract void undo();
 }

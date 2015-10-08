@@ -8,8 +8,9 @@ import java.awt.*;
  *
  * @author Tom Cormen
  * @author Ezekiel Elin
- * @see Shape
+ * @see PointShape
  */
+
 public class Rect extends PointShape {
     public Rect(int x, int y, int width, int height, Color c) {
         super(x, y, width, height, c);
@@ -22,10 +23,10 @@ public class Rect extends PointShape {
     }
 
     public void drawShape(Graphics g) {
-        g.fillRect(x, y, width, height);
-        if (this.isSelected()) {
-            g.setColor(Color.black);
-            g.drawRect(x, y, width, height);
+        g.fillRect(x, y, width, height); //Fill the rect
+        if (this.isSelected()) { //If it's selected
+            g.setColor(Color.black); //Outline it black as well
+            g.drawRect(x, y, width, height); //Like this!
         }
     }
 }

@@ -6,7 +6,7 @@
 * Written by THC for CS 10 Lab Assignment 1.
 *
 * @author Tom Cormen
-* @author YOU
+* @author Ezekiel Elin
 */
 import java.awt.*;
 import java.awt.event.*;
@@ -87,11 +87,6 @@ public class Editor extends JApplet {
         JLabel editLabel = new JLabel("Edit:");
         editPanel.setLayout(new FlowLayout());
         editPanel.add(editLabel);
-        // moveButton.setBackground(Color.yellow);
-        // deleteButton.setBackground(Color.yellow);
-        // frontButton.setBackground(Color.yellow);
-        // backButton.setBackground(Color.yellow);
-        // exchangeButton.setBackground(Color.yellow);
         editPanel.add(moveButton);
         editPanel.add(deleteButton);
         editPanel.add(frontButton);
@@ -235,7 +230,7 @@ public class Editor extends JApplet {
     */
     private class UndoButtonListener implements ActionListener {
         public void actionPerformed(ActionEvent event) {
-            dwg.undo();
+            dwg.undo(); //No cmd here, this occurs when the button itself is pressed
             repaint();
         }
     }

@@ -6,8 +6,9 @@ import java.awt.*;
 *
 * @author Tom Cormen
 * @author Ezekiel Elin
-* @see Shape
+* @see PointShape
 */
+
 public class Ellipse extends PointShape {
     public Ellipse(int x, int y, int w, int h, Color c) {
         super(x, y, w, h, c);
@@ -33,10 +34,10 @@ public class Ellipse extends PointShape {
     }
 
     public void drawShape(Graphics g) {
-        g.fillOval(x, y, width, height);
-        if (this.isSelected()) {
-            g.setColor(Color.black);
-            g.drawOval(x, y, width, height);
+        g.fillOval(x, y, width, height); //Fill the oval
+        if (this.isSelected()) { //If it's selected
+            g.setColor(Color.black); //Outline it black as well
+            g.drawOval(x, y, width, height); //Like this!
         }
     }
 }

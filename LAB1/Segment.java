@@ -7,13 +7,14 @@ import java.awt.*;
 * Written by THC for CS 10 Lab Assignment 1.
 *
 * @author Tom Cormen
-* @author YOU
-* @see Shape
+* @author Ezekiel Elin
+* @see PointShape
 */
+
 public class Segment extends PointShape {
 
     private static final int TOLERANCE = 3;
-    private boolean reversed = false;
+    private boolean reversed = false; //Wether to draw the line opposite how it would normally be drawn
 
     public Segment(int x, int y, int height, int width, Color c) {
         super(x, y, height, width, c);
@@ -59,35 +60,42 @@ public class Segment extends PointShape {
 
     public boolean containsPoint(Point p) {
         //Check if this line segment is reversed, because it's hitbox will be different if it is
-        if (isReversed()) {
-            //Check if we're in the rect
-            if (almostContainsPoint(p, x, y, (x + width), (y + height), TOLERANCE)) {
+        if (almostContainsPoint(p, x, y, (x + width), (y + height), TOLERANCE)) {
+            if (isReversed()) {
                 //Check if we're close enough to the reversed line
                 if (distanceToPoint(p, (x + width), y, x, (y + height)) < TOLERANCE) {
                     return true;
                 }
-            }
-        } else {
-            if (almostContainsPoint(p, x, y, (x + width), (y + height), TOLERANCE)) {
+            } else {
+                //Check wether we're in the regular line
                 if (distanceToPoint(p, x, y, (x + width), (y + height)) < TOLERANCE) {
                     return true;
                 }
             }
         }
+        //Must not have clicked it :(
         return false;
     }
 
+    /**
+     * Check if the line is reversed
+     * @return is reversed
+     */
     public boolean isReversed() {
         return reversed;
     }
 
+    /**
+     * Set wether the line is reversed
+     * @param r is reversed (bool)
+     */
     public void setReversed(boolean r) {
         reversed = r;
     }
 
     public void drawShape(Graphics g) {
         if (this.isSelected()) {
-            g.setColor(Color.black);
+            g.setColor(Color.black); //We want a black line if it's selected
         }
         if (isReversed()) {
             //Draw the reversed line

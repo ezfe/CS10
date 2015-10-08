@@ -8,6 +8,7 @@ import java.awt.*;
 * Written by THC for CS 10 Lab Assignment 1.
 *
 * @author Tom Cormen
+* @author Ezekiel Elin added some new methods for selection and colors (October 8, 2015)
 */
 public abstract class Shape {
     private Color color; // Shape's color
@@ -82,18 +83,32 @@ public abstract class Shape {
         move(newCenter.x - oldCenter.x, newCenter.y - oldCenter.y);
     }
 
+    /**
+     * Select the shape
+     */
     public void select() {
         selected = true;
     }
 
+    /**
+     * Check if the shape is selected
+     * @return is selected
+     */
     public boolean isSelected() {
         return selected;
     }
 
+    /**
+     * Toggle the selection
+     */
     public void toggleSelection() {
         selected = !selected;
     }
 
+    /**
+     * Get the Color
+     * @return Color of the shape
+     */
     public Color getColor() {
         return color;
     }
