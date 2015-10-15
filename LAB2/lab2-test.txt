@@ -1,0 +1,216 @@
+Command: ?
+Commands are
+  q: quit
+  C: clear
+  a: add
+  f: addFirst
+  l: addLast
+  c: contains
+  r: remove
+  p: print
+  h: head
+  t: tail
+  n: next
+  H: has next
+  g: get current
+  s: set current
+  ?: print this command list
+
+Command: a
+Enter name: 1
+Command: a
+Enter name: 2
+Command: a
+Enter name: 3
+Command: a
+Enter name: 4
+Command: a
+Enter name: 5
+Command: a
+Enter name: 6
+Command: a
+Enter name: 7
+Command: a
+Enter name: 8
+Command: a
+Enter name: 9
+Command: a
+Enter name: 10
+Command: p
+1
+2
+3
+4
+5
+6
+7
+8
+9
+10
+Command: f
+Enter name: 0
+Command: p
+0
+1
+2
+3
+4
+5
+6
+7
+8
+9
+10
+Command: h
+0
+Command: g
+0
+Command: n
+1
+Command: n
+2
+Command: n
+3
+Command: g
+3
+Command: n
+4
+Command: h
+0
+Command: l
+Enter name: 11
+Command: p
+0
+1
+2
+3
+4
+5
+6
+7
+8
+9
+10
+11
+Command: g
+11
+Command: n
+No next item
+null
+Command: H
+The list does not have a next element
+Command: h
+0
+Command: H
+The list has a next element
+Command: p
+0
+1
+2
+3
+4
+5
+6
+7
+8
+9
+10
+11
+Command: g
+0
+Command: n
+1
+Command: n
+2
+Command: n
+3
+Command: r
+Command: p
+0
+1
+2
+4
+5
+6
+7
+8
+9
+10
+11
+Command: h
+0
+Command: r
+Command: p
+1
+2
+4
+5
+6
+7
+8
+9
+10
+11
+Command: t
+11
+Command: r
+Command: p
+1
+2
+4
+5
+6
+7
+8
+9
+10
+Command: g
+No current item
+null
+Command: h
+1
+Command: n
+2
+Command: n
+4
+Command: n
+5
+Command: s
+Enter name: New 5
+Command: p
+1
+2
+4
+New 5
+6
+7
+8
+9
+10
+Command: c
+Enter name: 1
+Found 1
+Command: c
+Enter name: 6
+Found 6
+Command: c
+Enter name: 2
+Found 2
+Command: c
+Enter name: 11
+Didn't find 11
+Command: c
+Enter name: 5
+Didn't find 5
+Command: c
+Enter name: New 5
+Found New 5
+Command: C
+Command: p
+List is empty
+Command: a
+Enter name: New Item!
+Command: p
+New Item!
+Command: q
+Bye!
