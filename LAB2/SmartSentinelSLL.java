@@ -1,7 +1,10 @@
 /**
 * SLL.java
 *
-* Implementation of singly linked list without a sentinel.
+* Implementation of singly linked with a sentinel.
+* Two instance variables used to maintain a sentinel and a current value.
+* The current is tracked via currentPred, which points to the value prior to current
+*
 * WARNING: This implementation is guaranteed to work only if always given
 * immutable objects (or at least ones that do not change).
 *
@@ -9,11 +12,12 @@
 * @author Scot Drysdale converted to Java
 * @author Scot Drysdale, THC have made a number of modifications.
 * @author Scot Drysdale most recently modified on 1/12/2011
+* @author Ezekiel Elin, reworking into a SLL with Sentinel for CS10, Lab 2
 */
 public class SmartSentinelSLL<T> implements CS10LinkedList<T> {
     // Instance variables.
     private Element<T> currentPred;    // item in front of the current item
-    private Element<T> head;       // head of list
+    private Element<T> sentinel;       // head of list
 
     /**
     * A private class inner representing the elements in the list.
@@ -52,8 +56,8 @@ public class SmartSentinelSLL<T> implements CS10LinkedList<T> {
     */
     public void clear() {
         // No elements are in the list, so everything is null.
-        head = new Element<T>(null);;
-        currentPred = head;
+        sentinel = new Element<T>(null);;
+        currentPred = sentinel;
     }
 
     /**
@@ -62,13 +66,15 @@ public class SmartSentinelSLL<T> implements CS10LinkedList<T> {
     public void add(T obj) {
         Element<T> x = new Element<T>(obj);   // allocate a new element
 
-        if (isEmpty()) {
-            x.next = null;
-            currentPred.next = x;
-        } else {
-            x.next = currentPred.next.next;
-            currentPred.next.next = x;
-            currentPred = currentPred.next;
+        //Check if there is a current element. Do the magic if there is
+        if (hasCurrent()) {
+            x.next = currentPred.next.next; //We know currentPred.next exists
+            currentPred.next.next = x; //the predecessor of the current is the one we track, so jump two ahead and set X there
+            currentPred = currentPred.next; //Set the currentPred to the one after the current currentPred.
+        } else { //Otherwise, this should go at the beginning of the list
+            x.next = sentinel.next; //can't do currentPred.next.next if currentPred.next is null
+            sentinel.next = x; //set X as the element after the sentinel, because the list is empty
+            currentPred = sentinel; //make sure currentPred is pointing at the sentinel, which is just prior to our new element
         }
     }
 
@@ -83,6 +89,7 @@ public class SmartSentinelSLL<T> implements CS10LinkedList<T> {
         }
 
         currentPred.next = currentPred.next.next;       // make the successor the current position
+        if (currentPred.next == null) currentPred = null; //If there is no current, move currentPred to the sentinel
     }
 
     /**
@@ -91,10 +98,7 @@ public class SmartSentinelSLL<T> implements CS10LinkedList<T> {
     public String toString() {
         String result = "";
 
-        if (isEmpty())
-            return "<Empty List>"; //TODO
-
-        for (Element<T> x = head.next; x != null; x = x.next)
+        for (Element<T> x = sentinel.next; x != null; x = x.next)
         result += x.toString() + "\n";
 
         return result;
@@ -104,31 +108,36 @@ public class SmartSentinelSLL<T> implements CS10LinkedList<T> {
     * @see CS10ListADT#contains()
     */
     public boolean contains(T obj) {
-        Element<T> x;
+        Element<T> x = sentinel.next; //set x to the first item in the list. MAY be NULL, this is
+        Element<T> xPred = sentinel; //set xPred to the sentinel
 
-        for (x = head; x != null && !x.data.equals(obj); x = x.next)
-        ;
+        while (x != null) {
+            if (x.next != null) {
+                xPred = x;
+                x = x.next;
+                if (x.data.equals(obj)) {
+                    currentPred = xPred;
+                    return true;
+                }
+            } else break;
+        }
 
-        // We dropped out of the loop either because we ran off the end of the list
-        // (in which case x == null) or because we found s (and so x != null).
-        if (x != null)
-            currentPred.next = x;
-
-        return x != null;
+        return false;
     }
+
 
     /**
     * @see CS10ListADT#isEmpty()
     */
     public boolean isEmpty() {
-        return head.next == null;
+        return sentinel.next == null;
     }
 
     /**
     * @see CS10ListADT#hasCurrent()
     */
     public boolean hasCurrent() {
-        return currentPred.next != null;
+        return !(isEmpty() || currentPred == null || currentPred.next == null);
     }
 
     /**
@@ -142,26 +151,25 @@ public class SmartSentinelSLL<T> implements CS10LinkedList<T> {
     * @see CS10ListADT#getFirst()
     */
     public T getFirst() {
+        //check that the list isn't empty
         if (isEmpty()) {
             System.err.println("The list is empty");
             return null;
         }
-        currentPred = head;
-        return get();
+        currentPred = sentinel; //set the "current" to whatever the sentinel precedes (first item)
+        return get(); //get it
     }
 
     /**
     * @see CS10ListADT#getLast()
     */
     public T getLast() {
-        //TODO Look at this
         if (isEmpty()) {
             System.err.println("The list is empty");
             return null;
         } else {
-            while (hasNext())
-                next();
-            return get();
+            while (hasNext()) next(); //Go to the end of the list
+            return get(); //get it
         }
     }
 
@@ -169,9 +177,10 @@ public class SmartSentinelSLL<T> implements CS10LinkedList<T> {
     * @see CS10ListADT#addFirst()
     */
     public void addFirst(T obj) {
-        //TODO
-        currentPred = head;
-        add(obj);
+        Element<T> x = new Element<T>(obj);   // allocate a new element
+
+        currentPred = null; //set current pred to null, so that
+        add(obj); //add adds it to the beginning of the list
     }
 
     /**
@@ -179,7 +188,7 @@ public class SmartSentinelSLL<T> implements CS10LinkedList<T> {
     */
     public void addLast(T obj) {
         if(isEmpty())
-            addFirst(obj);
+        addFirst(obj);
         else {
             getLast();
             add(obj);
@@ -205,9 +214,9 @@ public class SmartSentinelSLL<T> implements CS10LinkedList<T> {
     */
     public void set(T obj) {
         if (hasCurrent())
-            currentPred.next.data = obj;
+        currentPred.next.data = obj;
         else
-            System.err.println("No current item");
+        System.err.println("No current item");
     }
 
     /**
@@ -217,8 +226,7 @@ public class SmartSentinelSLL<T> implements CS10LinkedList<T> {
         if (hasNext()) {
             currentPred = currentPred.next;
             return currentPred.next.data;
-        }
-        else {
+        } else {
             System.err.println("No next item");
             return null;
         }

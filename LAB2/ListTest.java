@@ -23,7 +23,7 @@ public class ListTest {
     Scanner input = new Scanner(System.in);
 
     do {
-      System.out.print("Command (q, C, a, f, l, c, r, p, h, t, n, H, g, s, ?): ");
+      System.out.print("Command: ");
       command = input.nextLine().charAt(0);
 
       switch (command) {
