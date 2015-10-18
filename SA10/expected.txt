@@ -1,0 +1,75 @@
+tree: 
+  7
+    5
+3
+    1
+      6
+  2
+    4
+
+Size of tree = 7
+Height of tree = 3
+Fringe of tree = [4, 6, 5]
+Number of leaves = 3
+Depth of node 1 = 2
+Preorder traversal of the tree = [3, 2, 4, 1, 6, 7, 5]
+Inorder traversal of the tree = [4, 2, 6, 1, 3, 5, 7]
+Postorder traversal of the tree = [4, 6, 1, 2, 5, 7, 3]
+tree1: 
+  7
+    5
+3
+    1
+      6
+  2
+    4
+
+tree and tree1 are equal? true
+tree: 
+  7
+    5
+3
+    1
+      6
+  2
+    4
+
+modified tree1: 
+  8
+    5
+3
+    1
+      6
+  2
+    4
+
+tree and tree1 are equal? false
+tree2: 
+  7
+    5
+3
+    1
+      6
+  2
+
+Size of tree2 = 6
+Height of tree2 = 3
+Fringe of tree2 = [6, 5]
+tree and tree2 are equal? false
+tree3: 
+  7
+    5
+3
+    1
+      6
+  2
+    4
+
+Size of tree3 = 7
+Height of tree3 = 3
+Fringe of tree3 = [4, 6, 5]
+Number of leaves = 3
+Depth of node 1 = 2
+tree and tree3 are equal? true
+tree's right child's value = 8
+tree3's right child's value = 8
