@@ -1,0 +1,5 @@
+1.
+An ADT is a way of specifying what operations a class conforms to, and what each operation should do.
+The implementation of an ADT performs the actual operations and may perform the operation using any method, provided it conforms to the ADT.
+Abstraction is when you create a black box. You decide what goes in, and you decide what should come out (based on what goes in). What happens inside that box does not matter, so long as it works. An Abstract class is one that has no implementation, instead you are defining it's input and output, allowing it to be implemented however the programmer wishes, in some other location.
+Java provides Interfaces and Abstract Classes to realize ADTs. These, combined with comments, allow you to fully specify an ADT.

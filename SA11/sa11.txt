@@ -1,0 +1,11 @@
+==SHORT ASSIGNMENT 11==
+
+k ArrayLists, non-decreasing order (⋍increasing order) 1,2,3,3,4
+
+Σ(each k.size) = n elements
+
+-> Getting minimum value from HEAP(n elements) = Θ(lg n)
+
+—> single sorted ArrayList of n elements, O(n lg k) time
+
+Loop through all k arrays–figure out which one has the minimum first value. This takes O(k) time. On each loop, use extractMin to get the minimum value, each extractMin taking O(log n). This comes out to O(k log n). After extracting it, append it to the end of your destination array, which can take O(1) if the array is adequately sized to length = n;
