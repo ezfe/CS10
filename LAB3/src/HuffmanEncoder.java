@@ -51,6 +51,7 @@ public class HuffmanEncoder {
 			CharacterFrequencyStore newCFStore = new CharacterFrequencyStore(a.getValue().frequency + b.getValue().frequency);
 			
 			BinaryTree<CharacterFrequencyStore> n = new BinaryTree<CharacterFrequencyStore>(newCFStore);
+			System.out.println(n.getRight());
 			n.setLeft(a);
 			n.setRight(b);
 			
@@ -60,7 +61,7 @@ public class HuffmanEncoder {
 		BinaryTree<CharacterFrequencyStore> mainTree = pq.peek();
 		mainTree.traverse(charCodeMap);
 		
-		System.out.println(pq.peek().getValue());
+//		System.out.println(pq.peek().getValue());
 		
 		System.out.println(charCodeMap);
 	}
