@@ -33,6 +33,8 @@ public class HuffmanEncoder {
 			}
 		}
 		
+		inputFile.close();
+		
 		PriorityQueue<BinaryTree<CharacterFrequencyStore>> pq = new PriorityQueue<BinaryTree<CharacterFrequencyStore>>(charMap.size(), new TreeComparator());
 		
 		Iterator iterator = charMap.keySet().iterator();
@@ -51,24 +53,36 @@ public class HuffmanEncoder {
 			CharacterFrequencyStore newCFStore = new CharacterFrequencyStore(a.getValue().frequency + b.getValue().frequency);
 			
 			BinaryTree<CharacterFrequencyStore> n = new BinaryTree<CharacterFrequencyStore>(newCFStore);
-			System.out.println(n.getRight());
 			n.setLeft(a);
 			n.setRight(b);
 			
 			pq.add(n);
 		}
-		
+
 		BinaryTree<CharacterFrequencyStore> mainTree = pq.peek();
 		mainTree.traverse(charCodeMap);
-		
-//		System.out.println(pq.peek().getValue());
-		
-		System.out.println(charCodeMap);
-	}
 
-	private static CharacterFrequencyStore CharacterFrequencyStore(int frequency) {
-		// TODO Auto-generated method stub
-		return null;
+		String out = getFilePath();
+		BufferedBitWriter outFile = new BufferedBitWriter(out);
+		BufferedReader inFile =  new BufferedReader(new FileReader(s));
+
+		while (true) {
+			int cint = inFile.read();
+			if (cint == -1) {
+				break;
+			} else {
+				char c = (char)cint;
+				String toWrite = charCodeMap.get(c);
+				
+				for (char bit : toWrite.toCharArray()){
+					if (bit == '0') {
+						outFile.writeBit(0);
+					} else {
+						outFile.writeBit(1);
+					}
+				}
+			}
+		}
 	}
 
 	public static String getFilePath() {

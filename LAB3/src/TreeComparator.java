@@ -12,8 +12,8 @@ public class TreeComparator implements Comparator {
 			BinaryTree<CharacterFrequencyStore> bt1 = (BinaryTree<CharacterFrequencyStore>)o1;
 			BinaryTree<CharacterFrequencyStore> bt2 = (BinaryTree<CharacterFrequencyStore>)o2;
 
-			if (bt1.getValue().frequency > bt2.getValue().frequency)		return -1;
-			else if (bt1.getValue().frequency < bt2.getValue().frequency)	return 1;
+			if (bt1.getValue().frequency > bt2.getValue().frequency)		return 1;
+			else if (bt1.getValue().frequency < bt2.getValue().frequency)	return -1;
 			else 															return 0;
 		} else {
 			System.out.println("Faulty comparison");
