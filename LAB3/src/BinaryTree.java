@@ -333,8 +333,8 @@ public class BinaryTree<E> {
 	}
 	
 	public void traverse(HashMap<Character, String> charCodeMap) {
-		if (right != null) right.traverse('1', "", charCodeMap);
-		if (left != null) left.traverse('0', "", charCodeMap);
+		if (right != null) right.traverse('R', "", charCodeMap);
+		if (left != null) left.traverse('L', "", charCodeMap);
 	}
 	
 	public void traverse(char comeFrom, String path, HashMap<Character, String> charCodeMap) {
@@ -345,7 +345,7 @@ public class BinaryTree<E> {
 				charCodeMap.put(cfstore.character, path);
 			}
 		}
-		if (this.hasRight()) this.right.traverse('1', path, charCodeMap);
-		if (this.hasLeft()) this.left.traverse('0', path, charCodeMap);
+		if (this.hasRight()) this.right.traverse('R', path, charCodeMap);
+		if (this.hasLeft()) this.left.traverse('L', path, charCodeMap);
 	}
 }

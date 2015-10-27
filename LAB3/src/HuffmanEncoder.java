@@ -11,60 +11,25 @@ import javax.swing.SwingUtilities;
 public class HuffmanEncoder {
 
 	public static void main(String[] args) throws Exception {
-		String s = getFilePath();
-		BufferedReader inputFile =  new BufferedReader(new FileReader(s));
+		String in = getFilePath();
+
+		String out = in + "__compressed.txt";
+		String out2 = in + "__decompressed.txt";
+
+		BinaryTree<CharacterFrequencyStore> freqTree = generateCharacterFrequencyTree(in);
+		compressFile(in, out, freqTree);
 		
-		HashMap<Character, Integer> charMap = new HashMap<Character, Integer>();
+		decompressFile(out, out2, freqTree);
+	}
+
+	private static void compressFile(String pathIn, String pathOut, BinaryTree<CharacterFrequencyStore> freqTree) throws Exception {
+		//Create a code map
 		HashMap<Character, String> charCodeMap = new HashMap<Character, String>();
-		HashMap<Integer, BinaryTree<Character>> singletons = new HashMap<Integer, BinaryTree<Character>>();
-		
-		while (true) {
-			int cint = inputFile.read();
-			if (cint == -1) {
-				break;
-			} else {
-				char c = (char)cint;
-				if (charMap.get(c) == null) {
-					charMap.put(c, 1);
-				} else {
-					charMap.put(c, charMap.get(c)+1);
-				}
-				
-			}
-		}
-		
-		inputFile.close();
-		
-		PriorityQueue<BinaryTree<CharacterFrequencyStore>> pq = new PriorityQueue<BinaryTree<CharacterFrequencyStore>>(charMap.size(), new TreeComparator());
-		
-		Iterator iterator = charMap.keySet().iterator();
-		while (iterator.hasNext()) {
-			char c = (char)iterator.next();
-			CharacterFrequencyStore cfstore = new CharacterFrequencyStore(charMap.get(c), c);
-			BinaryTree<CharacterFrequencyStore> singletonTree = new BinaryTree<CharacterFrequencyStore>(cfstore);
-			
-			pq.add(singletonTree);
-		}
-		
-		while (pq.size() > 1) {
-			BinaryTree<CharacterFrequencyStore> a = pq.remove();
-			BinaryTree<CharacterFrequencyStore> b = pq.remove();
-			
-			CharacterFrequencyStore newCFStore = new CharacterFrequencyStore(a.getValue().frequency + b.getValue().frequency);
-			
-			BinaryTree<CharacterFrequencyStore> n = new BinaryTree<CharacterFrequencyStore>(newCFStore);
-			n.setLeft(a);
-			n.setRight(b);
-			
-			pq.add(n);
-		}
+		//Traverse the tree and generate the code map
+		freqTree.traverse(charCodeMap);
 
-		BinaryTree<CharacterFrequencyStore> mainTree = pq.peek();
-		mainTree.traverse(charCodeMap);
-
-		String out = getFilePath();
-		BufferedBitWriter outFile = new BufferedBitWriter(out);
-		BufferedReader inFile =  new BufferedReader(new FileReader(s));
+		BufferedBitWriter outFile = new BufferedBitWriter(pathOut);
+		BufferedReader inFile =  new BufferedReader(new FileReader(pathIn));
 
 		while (true) {
 			int cint = inFile.read();
@@ -73,7 +38,6 @@ public class HuffmanEncoder {
 			} else {
 				char c = (char)cint;
 				String toWrite = charCodeMap.get(c);
-				
 				for (char bit : toWrite.toCharArray()){
 					if (bit == '0') {
 						outFile.writeBit(0);
@@ -83,8 +47,94 @@ public class HuffmanEncoder {
 				}
 			}
 		}
+
+		inFile.close();
+		outFile.close();
 	}
 
+	private static BinaryTree<CharacterFrequencyStore> generateCharacterFrequencyTree(String s) throws Exception {
+		BufferedReader inputFile =  new BufferedReader(new FileReader(s));
+
+		HashMap<Character, Integer> charMap = new HashMap<Character, Integer>();
+		//Generate a frequency table
+		while (true) {
+			int cint = inputFile.read();
+			if (cint == -1) {
+				//There is nothing left, let's move on!
+				break;
+			} else {
+				char c = (char)cint;
+				if (charMap.get(c) == null) {
+					charMap.put(c, 1);
+				} else {
+					charMap.put(c, charMap.get(c)+1);
+				}
+
+			}
+		}
+
+		//Close the input file
+		inputFile.close();
+
+		TreeComparator comparator = new TreeComparator();
+		PriorityQueue<BinaryTree<CharacterFrequencyStore>> pq = new PriorityQueue<BinaryTree<CharacterFrequencyStore>>(charMap.size(), comparator);
+
+		//Go through the frequency map and create trees from them
+		//Add each tree to the priority queue
+		Iterator<Character> iterator = charMap.keySet().iterator();
+		while (iterator.hasNext()) {
+			char c = iterator.next();
+			CharacterFrequencyStore cfstore = new CharacterFrequencyStore(charMap.get(c), c);
+
+			BinaryTree<CharacterFrequencyStore> singletonTree = new BinaryTree<CharacterFrequencyStore>(cfstore);
+			pq.add(singletonTree);
+		}
+
+		//While the priority queue has more than one element, go through and combine them
+		while (pq.size() > 1) {
+			BinaryTree<CharacterFrequencyStore> a = pq.remove();
+			BinaryTree<CharacterFrequencyStore> b = pq.remove();
+
+			CharacterFrequencyStore newCFStore = new CharacterFrequencyStore(a.getValue().frequency + b.getValue().frequency);
+
+			BinaryTree<CharacterFrequencyStore> n = new BinaryTree<CharacterFrequencyStore>(newCFStore);
+			n.setLeft(a);
+			n.setRight(b);
+
+			pq.add(n);
+		}
+
+		//Return the last element in the priority queue
+		return pq.remove();
+	}
+
+	private static void decompressFile(String pathIn, String pathOut, BinaryTree<CharacterFrequencyStore> freqTree) throws Exception {
+		BufferedBitReader compressedFile = new BufferedBitReader(pathIn);
+		BufferedWriter decompressedFile = new BufferedWriter(new FileWriter(pathOut));
+		
+		BinaryTree<CharacterFrequencyStore> current = freqTree;
+		
+		while (true) {
+			int bit = compressedFile.readBit();
+			if (bit == -1) {
+				System.out.println("Finished decompressing");
+				break;
+		} else if (bit == 1) {
+				current = current.getRight();
+			} else if (bit == 0) {
+				current = current.getLeft();
+			}
+			Character character = current.getValue().character;
+			if (character != null) {
+				decompressedFile.write(character);
+				current = freqTree;
+			}
+		}
+		
+		decompressedFile.close();
+		compressedFile.close();
+	}
+	
 	public static String getFilePath() {
 		final AtomicReference<String> result = new AtomicReference<>();
 
