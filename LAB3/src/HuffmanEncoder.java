@@ -1,6 +1,7 @@
 import java.io.*;
 import java.lang.reflect.InvocationTargetException;
 import javax.swing.JFileChooser;
+import javax.swing.JOptionPane;
 
 import java.util.HashMap;
 import java.util.Iterator;
@@ -12,13 +13,14 @@ public class HuffmanEncoder {
 
 	public static void main(String[] args) throws Exception {
 		String in = getFilePath();
-
+		String in2 = getFilePath();
+		
 		String out = in + "__compressed.txt";
 		String out2 = in + "__decompressed.txt";
 
 		BinaryTree<CharacterFrequencyStore> freqTree = generateCharacterFrequencyTree(in);
-		compressFile(in, out, freqTree);
-		
+		compressFile(in2, out, freqTree);
+				
 		decompressFile(out, out2, freqTree);
 	}
 
@@ -38,8 +40,11 @@ public class HuffmanEncoder {
 			} else {
 				char c = (char)cint;
 				String toWrite = charCodeMap.get(c);
+				if (toWrite == null) {
+					System.err.println("Character Code Map did not contain " + c);
+				}
 				for (char bit : toWrite.toCharArray()){
-					if (bit == '0') {
+					if (bit == 'L') {
 						outFile.writeBit(0);
 					} else {
 						outFile.writeBit(1);
@@ -111,15 +116,15 @@ public class HuffmanEncoder {
 	private static void decompressFile(String pathIn, String pathOut, BinaryTree<CharacterFrequencyStore> freqTree) throws Exception {
 		BufferedBitReader compressedFile = new BufferedBitReader(pathIn);
 		BufferedWriter decompressedFile = new BufferedWriter(new FileWriter(pathOut));
-		
+
 		BinaryTree<CharacterFrequencyStore> current = freqTree;
-		
+
 		while (true) {
 			int bit = compressedFile.readBit();
 			if (bit == -1) {
 				System.out.println("Finished decompressing");
 				break;
-		} else if (bit == 1) {
+			} else if (bit == 1) {
 				current = current.getRight();
 			} else if (bit == 0) {
 				current = current.getLeft();
@@ -130,11 +135,11 @@ public class HuffmanEncoder {
 				current = freqTree;
 			}
 		}
-		
+
 		decompressedFile.close();
 		compressedFile.close();
 	}
-	
+
 	public static String getFilePath() {
 		final AtomicReference<String> result = new AtomicReference<>();
 
