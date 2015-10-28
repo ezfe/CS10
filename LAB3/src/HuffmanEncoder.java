@@ -19,7 +19,7 @@ public class HuffmanEncoder {
 	private static BinaryTree<CharacterFrequencyStore> freqTree; 
 
 	public static void main(String[] args) throws Exception {
-		String in = "/Users/ezekielelin/Library/Mobile Documents/com~apple~CloudDocs/Developer/CS10/LAB3/src/MobyDick.txt";
+		String in = "/Users/ezekielelin/Library/Mobile Documents/com~apple~CloudDocs/Developer/CS10/LAB3/src/short_example_a.txt";
 
 		//Let's now generate a path for the compressed output, as well as the decompressed output
 		String out = in + "__compressed.txt";
@@ -110,26 +110,6 @@ public class HuffmanEncoder {
 
 		writeCharacter('-', outFile); //Mark the end of the list
 		writeCharacter('-', outFile); //Really mark it!
-
-		for (CharacterFrequencyStore cfstore : inList) {
-			if (cfstore.character != null) {
-				writeCharacter(cfstore.character, outFile);
-			}
-
-			writeCharacter('!', outFile);
-			writeCharacter('!', outFile);
-
-			String freqString = Integer.toString(cfstore.frequency);
-			for (char c : freqString.toCharArray()) {
-				writeCharacter(c, outFile);
-			}
-			writeCharacter('%', outFile);
-			writeCharacter('%', outFile);
-		}
-
-
-		writeCharacter('*', outFile); //Mark the end of the tree
-		writeCharacter('*', outFile); //Really mark it!
 
 		//Loop forever!
 		while (true) {
@@ -260,9 +240,12 @@ public class HuffmanEncoder {
 		List<CharacterFrequencyStore> preList = new LinkedList<CharacterFrequencyStore>();
 		List<CharacterFrequencyStore> inList = new LinkedList<CharacterFrequencyStore>();
 
+		int place = 0;
+
 		Character previousCharacter = null;
 		while (true) {
 			int cint = compressedFile.read();
+			place++;
 			if (cint == -1) {
 				//There is nothing left, let's move on!
 				break;
@@ -273,11 +256,13 @@ public class HuffmanEncoder {
 				if (charA == '%') {
 					if (!(previousCharacter != null && previousCharacter == '%')) {
 						compressedFile.read();
+						place++;
 					}
 
 					char charC = (char)compressedFile.read();
 					char charD = (char)compressedFile.read();
 					char charE = (char)compressedFile.read();
+					place += 3;
 
 
 					char firstNumberCharacter = charE;
@@ -289,6 +274,7 @@ public class HuffmanEncoder {
 						foundCharacter = charC;
 						//AKA charF
 						firstNumberCharacter = (char)compressedFile.read();
+						place++;
 					} else if (charC == '-' && charD == '-') {
 						break;
 					} else {//Else, charE is the first.
@@ -304,6 +290,7 @@ public class HuffmanEncoder {
 
 					while (true) {
 						char x = (char)compressedFile.read();
+						place++;
 						//TODO check if X is a number instead of what X isn't
 						if (Character.isDigit(x)) workingNumber += (char)x;
 						else break;
@@ -322,74 +309,14 @@ public class HuffmanEncoder {
 			}
 		}
 
-		/*START DUPLICATE CODE*/
-		previousCharacter = null;
-		while (true) {
-			int cint = compressedFile.read();
-			if (cint == -1) {
-				//There is nothing left, let's move on!
-				break;
-			} else {
-				//Get the character
-				char charA = (char)cint;
+//		System.out.println(preList);
+//		System.out.println(inList);
+//		BinaryTree.reconstructTree(preList, inList);
 
-				if (charA == '%') {
-					if (!(previousCharacter != null && previousCharacter == '%')) {
-						compressedFile.read();
-					}
-
-					char charC = (char)compressedFile.read();
-					char charD = (char)compressedFile.read();
-					char charE = (char)compressedFile.read();
-
-
-					char firstNumberCharacter = charE;
-
-					Character foundCharacter = null;
-
-					if (charD == '!' && charE == '!') {
-						//We know charC is the character
-						foundCharacter = charC;
-						//AKA charF
-						firstNumberCharacter = (char)compressedFile.read();
-					} else if (charC == '*' && charD == '*') {
-						break;
-					} else {//Else, charE is the first.
-					}
-
-					String workingNumber;
-					if (Character.isDigit(firstNumberCharacter)) {
-						workingNumber = "" + firstNumberCharacter;
-					} else {
-						workingNumber = "";
-						System.out.println("Uh oh");
-					}
-
-					while (true) {
-						char x = (char)compressedFile.read();
-						//TODO check if X is a number instead of what X isn't
-						if (Character.isDigit(x)) workingNumber += (char)x;
-						else break;
-					}
-
-					//					System.out.println(foundCharacter);
-					//					System.out.println(workingNumber);
-
-					if (foundCharacter == null) {
-						inList.add(new CharacterFrequencyStore(Integer.parseInt(workingNumber)));
-					} else {
-						inList.add(new CharacterFrequencyStore(Integer.parseInt(workingNumber), foundCharacter));
-					}
-				}
-				previousCharacter = charA;
-			}
+		for (int i = 0; i < place * 8; i++) {
+			compressedFileBit.readBit();
 		}
-		/*END DUPLICATE CODE*/
-
-		System.out.println(preList);
-		System.out.println(inList);
-		BinaryTree.reconstructTree(preList, inList);
-
+		
 		//Keep track of where in the tree we are
 		BinaryTree<CharacterFrequencyStore> current = freqTree;
 
