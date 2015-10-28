@@ -19,7 +19,7 @@ public class HuffmanEncoder {
 	private static BinaryTree<CharacterFrequencyStore> freqTree; 
 
 	public static void main(String[] args) throws Exception {
-		String in = "/Users/ezekielelin/Library/Mobile Documents/com~apple~CloudDocs/Developer/CS10/LAB3/src/MobyDick.ezip";
+		String in = getFilePath();
 	
 		//Let's now generate a path for the compressed output, as well as the decompressed output
 		String out = null;
