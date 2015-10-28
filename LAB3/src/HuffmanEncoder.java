@@ -23,13 +23,13 @@ public class HuffmanEncoder {
 
 		BinaryTree<CharacterFrequencyStore> freqTree = generateCharacterFrequencyTree(in);
 
-//		List<CharacterFrequencyStore> preList = new LinkedList<CharacterFrequencyStore>();
-//		freqTree.preorder(preList);
-//		List<CharacterFrequencyStore> inList = new LinkedList<CharacterFrequencyStore>();
-//		freqTree.inorder(inList);
-//		
-//		System.out.println(preList);
-//
+		List<CharacterFrequencyStore> preList = new LinkedList<CharacterFrequencyStore>();
+		freqTree.preorder(preList);
+		List<CharacterFrequencyStore> inList = new LinkedList<CharacterFrequencyStore>();
+		freqTree.inorder(inList);
+		
+		System.out.println(preList);
+
 		compressFile(in, out, freqTree);
 				
 		decompressFile(out, out2, freqTree);
