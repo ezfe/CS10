@@ -17,7 +17,8 @@ import javax.swing.SwingUtilities;
 public class HuffmanEncoder {
 
 	private static BinaryTree<CharacterFrequencyStore> freqTree; 
-
+	private static List<CharacterFrequencyStore> freqListForCompression = new LinkedList<CharacterFrequencyStore>();
+	
 	public static void main(String[] args) throws Exception {
 		String in = getFilePath();
 	
@@ -66,15 +67,12 @@ public class HuffmanEncoder {
 		BufferedBitWriter outFile = new BufferedBitWriter(pathOut);
 		//Create a buffered reader (not a buffered bit reader, because we're reading regular stuff)
 		BufferedReader inFile =  new BufferedReader(new FileReader(pathIn));
-
-		List<CharacterFrequencyStore> frequencyList = new LinkedList<CharacterFrequencyStore>();
-		freqTree.populateStorageList(frequencyList);
-
+		
 		writeCharacter('%', outFile); //mark start
 		writeCharacter('%', outFile);
 
 		//Loop through preList
-		for (CharacterFrequencyStore cfstore : frequencyList) {
+		for (CharacterFrequencyStore cfstore : freqListForCompression) {
 			if (cfstore.character != null) {
 				writeCharacter(cfstore.character, outFile);
 			}
@@ -158,7 +156,7 @@ public class HuffmanEncoder {
 
 			}
 		}
-
+		
 		//Close the input file
 		inputFile.close();
 
@@ -166,22 +164,25 @@ public class HuffmanEncoder {
 		TreeComparator comparator = new TreeComparator();
 		//And make a priority queue, using that comparator
 		PriorityQueue<BinaryTree<CharacterFrequencyStore>> pq = new PriorityQueue<BinaryTree<CharacterFrequencyStore>>(charMap.size(), comparator);
-
+		
 		//Go through the frequency map and create trees from them
 		//Add each tree to the priority queue
 		Iterator<Character> iterator = charMap.keySet().iterator();
+		freqListForCompression.clear();
 		while (iterator.hasNext()) {
 			char c = iterator.next(); //Character from the keySet (a key)
 			//Get the character and it's frequency
 			//And store it in a new instancec of CharacterFrequencyStore
 			CharacterFrequencyStore cfstore = new CharacterFrequencyStore(charMap.get(c), c);
 
+			freqListForCompression.add(cfstore);
+			
 			//Make a new binary tree, with this new instance
 			BinaryTree<CharacterFrequencyStore> singletonTree = new BinaryTree<CharacterFrequencyStore>(cfstore);
 			//Add it to the priority queue
 			pq.add(singletonTree);
 		}
-
+		
 		generateCharacterFrequencyTree(pq);
 	}
 
