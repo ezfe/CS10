@@ -5,21 +5,32 @@ import javax.swing.JOptionPane;
 
 import java.util.HashMap;
 import java.util.Iterator;
+import java.util.LinkedList;
+import java.util.List;
 import java.util.PriorityQueue;
+import java.util.Scanner;
 import java.util.concurrent.atomic.AtomicReference;
 import javax.swing.SwingUtilities;
 
 public class HuffmanEncoder {
 
 	public static void main(String[] args) throws Exception {
-		String in = getFilePath();
-		String in2 = getFilePath();
+//		String in = getFilePath();
+		String in = "/Users/ezekielelin/Library/Mobile Documents/com~apple~CloudDocs/Developer/CS10/LAB3/src/MobyDick.txt";
 		
 		String out = in + "__compressed.txt";
 		String out2 = in + "__decompressed.txt";
 
 		BinaryTree<CharacterFrequencyStore> freqTree = generateCharacterFrequencyTree(in);
-		compressFile(in2, out, freqTree);
+
+//		List<CharacterFrequencyStore> preList = new LinkedList<CharacterFrequencyStore>();
+//		freqTree.preorder(preList);
+//		List<CharacterFrequencyStore> inList = new LinkedList<CharacterFrequencyStore>();
+//		freqTree.inorder(inList);
+//		
+//		System.out.println(preList);
+//
+		compressFile(in, out, freqTree);
 				
 		decompressFile(out, out2, freqTree);
 	}
@@ -122,7 +133,6 @@ public class HuffmanEncoder {
 		while (true) {
 			int bit = compressedFile.readBit();
 			if (bit == -1) {
-				System.out.println("Finished decompressing");
 				break;
 			} else if (bit == 1) {
 				current = current.getRight();
