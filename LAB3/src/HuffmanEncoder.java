@@ -18,35 +18,31 @@ public class HuffmanEncoder {
 
 	private static BinaryTree<CharacterFrequencyStore> freqTree; 
 	private static List<CharacterFrequencyStore> freqListForCompression = new LinkedList<CharacterFrequencyStore>();
-	
-	public static void main(String[] args) throws Exception {
+
+	public static void main(String[] args) {
 		String in = getFilePath();
-	
-		//Let's now generate a path for the compressed output, as well as the decompressed output
-		String out = null;
-		
+		String out;
+
 		if (in.lastIndexOf(".txt") == in.length() - 4) {
+			//Replace .txt with .ezip to represent a zipped file
 			out = in.substring(0, in.lastIndexOf(".txt")) + ".ezip";
 			try {
-				//Using generateCharacterFrequencyTree() to get a frequency tree
-				generateCharacterFrequencyTree(in);
-
 				//Let's compress the file using compressFile method!
 				compressFile(in, out);
 			} catch (Exception e) {
-				//Uh oh, let's tell the user what happened
-				//			System.err.println(e);
-				throw e;
+				e.printStackTrace();
 			}
 		} else if (in.lastIndexOf(".ezip") == in.length() - 5) {
+			//Replace .ezip with _decompressed.txt to represent an uncompressed file
 			out = in.substring(0, in.lastIndexOf(".ezip")) + "_decompressed.txt";			
 			try {
-				//Let's now decompress the file we just compressed using decompressFile()
+				//Let's now decompress the file
 				decompressFile(in, out);
+			} catch (FileNotZipException e) {
+				System.err.println("That file was not compressed with this program, or is corrupt");
+				System.err.println("If the original file contains special or unexpected characters, then this won't work");
 			} catch (Exception e) {
-				//Uh oh, let's tell the user what happened
-				//			System.err.println(e);
-				throw e;
+				e.printStackTrace();
 			}
 		}
 	}
@@ -58,6 +54,9 @@ public class HuffmanEncoder {
 	 * @throws Exception when bad stuff happens
 	 */
 	private static void compressFile(String pathIn, String pathOut) throws Exception {
+		//Make the freqTre
+		generateCharacterFrequencyTree(pathIn);
+
 		//Create a code map
 		HashMap<Character, String> charCodeMap = new HashMap<Character, String>();
 		//Traverse the tree and fill the code map
@@ -67,7 +66,7 @@ public class HuffmanEncoder {
 		BufferedBitWriter outFile = new BufferedBitWriter(pathOut);
 		//Create a buffered reader (not a buffered bit reader, because we're reading regular stuff)
 		BufferedReader inFile =  new BufferedReader(new FileReader(pathIn));
-		
+
 		writeCharacter('%', outFile); //mark start
 		writeCharacter('%', outFile);
 
@@ -156,7 +155,7 @@ public class HuffmanEncoder {
 
 			}
 		}
-		
+
 		//Close the input file
 		inputFile.close();
 
@@ -164,7 +163,7 @@ public class HuffmanEncoder {
 		TreeComparator comparator = new TreeComparator();
 		//And make a priority queue, using that comparator
 		PriorityQueue<BinaryTree<CharacterFrequencyStore>> pq = new PriorityQueue<BinaryTree<CharacterFrequencyStore>>(charMap.size(), comparator);
-		
+
 		//Go through the frequency map and create trees from them
 		//Add each tree to the priority queue
 		Iterator<Character> iterator = charMap.keySet().iterator();
@@ -176,13 +175,13 @@ public class HuffmanEncoder {
 			CharacterFrequencyStore cfstore = new CharacterFrequencyStore(charMap.get(c), c);
 
 			freqListForCompression.add(cfstore);
-			
+
 			//Make a new binary tree, with this new instance
 			BinaryTree<CharacterFrequencyStore> singletonTree = new BinaryTree<CharacterFrequencyStore>(cfstore);
 			//Add it to the priority queue
 			pq.add(singletonTree);
 		}
-		
+
 		generateCharacterFrequencyTree(pq);
 	}
 
@@ -242,53 +241,48 @@ public class HuffmanEncoder {
 				if (charA == '%') {
 					if (!(previousCharacter != null && previousCharacter == '%')) {
 						compressedFile.read();
-						place++;
+						place++; //Increment place
 					}
 
 					char charC = (char)compressedFile.read();
 					char charD = (char)compressedFile.read();
 					char charE = (char)compressedFile.read();
-					place += 3;
+					place += 3; //Read three times, increment place
 
-
-					char firstNumberCharacter = charE;
-
+					char firstNumberCharacter;
 					Character foundCharacter = null;
-
-					if (charD == '!' && charE == '!') {
+					
+					if (charC == '-' && charD == '-') {
+						//charC, 
+						break;
+					} else {
 						//We know charC is the character
 						foundCharacter = charC;
 						//AKA charF
 						firstNumberCharacter = (char)compressedFile.read();
-						place++;
-					} else if (charC == '-' && charD == '-') {
-						break;
-					} else {//Else, charE is the first.
+						place++; //Increment place
 					}
-
+					
 					String workingNumber;
 					if (Character.isDigit(firstNumberCharacter)) {
 						workingNumber = "" + firstNumberCharacter;
 					} else {
 						workingNumber = "";
-						System.out.println("Uh oh");
+						throw new FileNotZipException();
 					}
 
 					while (true) {
 						char x = (char)compressedFile.read();
-						place++;
+						place++; //Increment place
 						//TODO check if X is a number instead of what X isn't
 						if (Character.isDigit(x)) workingNumber += (char)x;
 						else break;
 					}
 
-					//					System.out.println(foundCharacter);
-					//					System.out.println(workingNumber);
-
-					if (foundCharacter == null) {
-						extractedList.add(new CharacterFrequencyStore(Integer.parseInt(workingNumber)));
-					} else {
+					try {
 						extractedList.add(new CharacterFrequencyStore(Integer.parseInt(workingNumber), foundCharacter));
+					} catch (NumberFormatException e) {
+						throw new FileNotZipException();
 					}
 				}
 				previousCharacter = charA;
@@ -298,7 +292,12 @@ public class HuffmanEncoder {
 		//Make a new comparator
 		TreeComparator comparator = new TreeComparator();
 		//And make a priority queue, using that comparator
-		PriorityQueue<BinaryTree<CharacterFrequencyStore>> pq = new PriorityQueue<BinaryTree<CharacterFrequencyStore>>(extractedList.size(), comparator);
+		PriorityQueue<BinaryTree<CharacterFrequencyStore>> pq;
+		try {
+			pq = new PriorityQueue<BinaryTree<CharacterFrequencyStore>>(extractedList.size(), comparator);
+		} catch (IllegalArgumentException e) {
+			throw new FileNotZipException();
+		}
 
 		//Go through the frequency map and create trees from them
 		//Add each tree to the priority queue
