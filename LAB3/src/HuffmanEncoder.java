@@ -19,50 +19,35 @@ public class HuffmanEncoder {
 	private static BinaryTree<CharacterFrequencyStore> freqTree; 
 
 	public static void main(String[] args) throws Exception {
-		String in = "/Users/ezekielelin/Library/Mobile Documents/com~apple~CloudDocs/Developer/CS10/LAB3/src/short_example_a.txt";
-
+		String in = "/Users/ezekielelin/Library/Mobile Documents/com~apple~CloudDocs/Developer/CS10/LAB3/src/MobyDick.ezip";
+	
 		//Let's now generate a path for the compressed output, as well as the decompressed output
-		String out = in + "__compressed.txt";
-		String out2 = in + "__decompressed.txt";
+		String out = null;
+		
+		if (in.lastIndexOf(".txt") == in.length() - 4) {
+			out = in.substring(0, in.lastIndexOf(".txt")) + ".ezip";
+			try {
+				//Using generateCharacterFrequencyTree() to get a frequency tree
+				generateCharacterFrequencyTree(in);
 
-		try {
-			//Using generateCharacterFrequencyTree() to get a frequency tree
-			generateCharacterFrequencyTree(in);
-		} catch (Exception e) {
-			//Uh oh, let's tell the user what happened
-			//			System.err.println(e);
-			throw e;
+				//Let's compress the file using compressFile method!
+				compressFile(in, out);
+			} catch (Exception e) {
+				//Uh oh, let's tell the user what happened
+				//			System.err.println(e);
+				throw e;
+			}
+		} else if (in.lastIndexOf(".ezip") == in.length() - 5) {
+			out = in.substring(0, in.lastIndexOf(".ezip")) + "_decompressed.txt";			
+			try {
+				//Let's now decompress the file we just compressed using decompressFile()
+				decompressFile(in, out);
+			} catch (Exception e) {
+				//Uh oh, let's tell the user what happened
+				//			System.err.println(e);
+				throw e;
+			}
 		}
-
-		/*YAY*/
-		List<CharacterFrequencyStore> preList = new LinkedList<CharacterFrequencyStore>();
-		freqTree.preorder(preList);
-		List<CharacterFrequencyStore> inList = new LinkedList<CharacterFrequencyStore>();
-		freqTree.inorder(inList);
-
-		freqTree = BinaryTree.reconstructTree(preList, inList);
-
-		/*END YAY*/
-
-		try {
-			//Let's compress the file using compressFile method!
-			compressFile(in, out);
-		} catch (Exception e) {
-			//Uh oh, let's tell the user what happened
-			//			System.err.println(e);
-			throw e;
-		}
-
-		try {
-			//Let's now decompress the file we just compressed using decompressFile()
-			decompressFile(out, out2);
-		} catch (Exception e) {
-			//Uh oh, let's tell the user what happened
-			//			System.err.println(e);
-			throw e;
-		}
-
-		//Should be all set
 	}
 
 	/**
@@ -82,17 +67,14 @@ public class HuffmanEncoder {
 		//Create a buffered reader (not a buffered bit reader, because we're reading regular stuff)
 		BufferedReader inFile =  new BufferedReader(new FileReader(pathIn));
 
-		//TODO Get rid of this
-		List<CharacterFrequencyStore> preList = new LinkedList<CharacterFrequencyStore>();
-		freqTree.preorder(preList);
-		List<CharacterFrequencyStore> inList = new LinkedList<CharacterFrequencyStore>();
-		freqTree.inorder(inList);
+		List<CharacterFrequencyStore> frequencyList = new LinkedList<CharacterFrequencyStore>();
+		freqTree.populateStorageList(frequencyList);
 
 		writeCharacter('%', outFile); //mark start
 		writeCharacter('%', outFile);
 
 		//Loop through preList
-		for (CharacterFrequencyStore cfstore : preList) {
+		for (CharacterFrequencyStore cfstore : frequencyList) {
 			if (cfstore.character != null) {
 				writeCharacter(cfstore.character, outFile);
 			}
@@ -200,6 +182,11 @@ public class HuffmanEncoder {
 			pq.add(singletonTree);
 		}
 
+		generateCharacterFrequencyTree(pq);
+	}
+
+	private static void generateCharacterFrequencyTree(PriorityQueue<BinaryTree<CharacterFrequencyStore>> pq) {
+
 		//While the priority queue has more than one element, go through and combine them
 		while (pq.size() > 1) {
 			//Get the smallest two trees (a and b)
@@ -221,7 +208,7 @@ public class HuffmanEncoder {
 		}
 
 		//Return the last element in the priority queue, and make it the freqTree
-		freqTree = pq.remove();
+		freqTree = pq.remove();	
 	}
 
 	/**
@@ -236,9 +223,7 @@ public class HuffmanEncoder {
 		BufferedReader compressedFile =  new BufferedReader(new FileReader(pathIn));
 		BufferedWriter decompressedFile = new BufferedWriter(new FileWriter(pathOut));
 
-
-		List<CharacterFrequencyStore> preList = new LinkedList<CharacterFrequencyStore>();
-		List<CharacterFrequencyStore> inList = new LinkedList<CharacterFrequencyStore>();
+		List<CharacterFrequencyStore> extractedList = new LinkedList<CharacterFrequencyStore>();
 
 		int place = 0;
 
@@ -300,29 +285,46 @@ public class HuffmanEncoder {
 					//					System.out.println(workingNumber);
 
 					if (foundCharacter == null) {
-						preList.add(new CharacterFrequencyStore(Integer.parseInt(workingNumber)));
+						extractedList.add(new CharacterFrequencyStore(Integer.parseInt(workingNumber)));
 					} else {
-						preList.add(new CharacterFrequencyStore(Integer.parseInt(workingNumber), foundCharacter));
+						extractedList.add(new CharacterFrequencyStore(Integer.parseInt(workingNumber), foundCharacter));
 					}
 				}
 				previousCharacter = charA;
 			}
 		}
 
-//		System.out.println(preList);
-//		System.out.println(inList);
-//		BinaryTree.reconstructTree(preList, inList);
+		//Make a new comparator
+		TreeComparator comparator = new TreeComparator();
+		//And make a priority queue, using that comparator
+		PriorityQueue<BinaryTree<CharacterFrequencyStore>> pq = new PriorityQueue<BinaryTree<CharacterFrequencyStore>>(extractedList.size(), comparator);
 
-		for (int i = 0; i < place * 8; i++) {
+		//Go through the frequency map and create trees from them
+		//Add each tree to the priority queue
+		Iterator<CharacterFrequencyStore> iterator = extractedList.iterator();
+		while (iterator.hasNext()) {
+			CharacterFrequencyStore cfstore = iterator.next(); //Character from the keySet (a key)
+
+			//Make a new binary tree, with this new instance
+			BinaryTree<CharacterFrequencyStore> singletonTree = new BinaryTree<CharacterFrequencyStore>(cfstore);
+			//Add it to the priority queue
+			pq.add(singletonTree);
+		}
+
+		generateCharacterFrequencyTree(pq);
+
+		//Have to adjust place by one, because it is overstepped one
+		for (int i = 0; i < (place - 1) * 8; i++) {
 			compressedFileBit.readBit();
 		}
-		
+
 		//Keep track of where in the tree we are
 		BinaryTree<CharacterFrequencyStore> current = freqTree;
 
 		//More looping forever!
 		while (true) {
 			int bit = compressedFileBit.readBit(); //Read the bit
+			//			System.out.println("Bit: " + bit);
 			if (bit == -1) {
 				//Stop! We've reached the end of the file
 				break;
@@ -348,6 +350,7 @@ public class HuffmanEncoder {
 		//Close stuff
 		decompressedFile.close();
 		compressedFileBit.close();
+		compressedFile.close();
 	}
 
 	/**

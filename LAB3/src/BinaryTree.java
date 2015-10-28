@@ -348,4 +348,15 @@ public class BinaryTree<E> {
 		if (this.hasRight()) this.right.traverse('R', path, charCodeMap);
 		if (this.hasLeft()) this.left.traverse('L', path, charCodeMap);
 	}
+	
+	public void populateStorageList(List<CharacterFrequencyStore> list) {
+		if (getValue() instanceof CharacterFrequencyStore) {
+			CharacterFrequencyStore cfstore = (CharacterFrequencyStore)getValue();
+			if (cfstore.character != null) {
+				list.add(cfstore);
+			}
+		}
+		if (this.hasRight()) this.right.populateStorageList(list);
+		if (this.hasLeft()) this.left.populateStorageList(list);
+	}
 }
