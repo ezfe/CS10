@@ -5,12 +5,13 @@ import java.util.Comparator;
  *
  */
 
-public class TreeComparator implements Comparator {
+public class TreeComparator implements Comparator<Object> {
 
+	@SuppressWarnings("unchecked")
 	public int compare(Object o1, Object o2) {
 		if (o1 instanceof BinaryTree && o2 instanceof BinaryTree) {
-			BinaryTree<CharacterFrequencyStore> bt1 = (BinaryTree<CharacterFrequencyStore>)o1;
-			BinaryTree<CharacterFrequencyStore> bt2 = (BinaryTree<CharacterFrequencyStore>)o2;
+			BinaryTree<CharacterFrequencyStore> bt1 = (BinaryTree<CharacterFrequencyStore>) o1;
+			BinaryTree<CharacterFrequencyStore> bt2 = (BinaryTree<CharacterFrequencyStore>) o2;
 
 			if (bt1.getValue().frequency > bt2.getValue().frequency)		return 1;
 			else if (bt1.getValue().frequency < bt2.getValue().frequency)	return -1;

@@ -29,6 +29,9 @@ public class HuffmanEncoder {
 			try {
 				//Let's compress the file using compressFile method!
 				compressFile(in, out);
+			} catch (CustomException e) {
+				System.err.println("Unable to compress");
+				System.err.println("Message: " + e.getMessage());
 			} catch (Exception e) {
 				e.printStackTrace();
 			}
@@ -38,9 +41,9 @@ public class HuffmanEncoder {
 			try {
 				//Let's now decompress the file
 				decompressFile(in, out);
-			} catch (FileNotZipException e) {
-				System.err.println("That file was not compressed with this program, or is corrupt");
-				System.err.println("If the original file contains special or unexpected characters, then this won't work");
+			} catch (CustomException e) {
+				System.err.println("Unable to decompress");
+				System.err.println("Message: " + e.getMessage());
 			} catch (Exception e) {
 				e.printStackTrace();
 			}
@@ -67,24 +70,23 @@ public class HuffmanEncoder {
 		//Create a buffered reader (not a buffered bit reader, because we're reading regular stuff)
 		BufferedReader inFile =  new BufferedReader(new FileReader(pathIn));
 
-		writeCharacter('%', outFile); //mark start
-		writeCharacter('%', outFile);
+		writeCharacter('~', outFile); //mark start
 
 		//Loop through preList
 		for (CharacterFrequencyStore cfstore : freqListForCompression) {
 			if (cfstore.character != null) {
 				writeCharacter(cfstore.character, outFile);
-			}
 
-			writeCharacter('!', outFile); //mark end of character
-			writeCharacter('!', outFile);
+				String freqString = Integer.toString(cfstore.frequency);
+				for (char c : freqString.toCharArray()) {
+					writeCharacter(c, outFile);
+				}
 
-			String freqString = Integer.toString(cfstore.frequency);
-			for (char c : freqString.toCharArray()) {
-				writeCharacter(c, outFile);
+				writeCharacter(',', outFile); //Mark end of entry
+			} else {
+				inFile.close();
+				throw new CustomException("Character not found! Can't encode");
 			}
-			writeCharacter('%', outFile); //Mark end of entry
-			writeCharacter('%', outFile); //aka the start of the next
 		}
 
 		writeCharacter('-', outFile); //Mark the end of the list
@@ -104,8 +106,8 @@ public class HuffmanEncoder {
 				String toWrite = charCodeMap.get(c);
 				//If it is null, then we have a SERIOUS problem
 				if (toWrite == null) {
-					System.err.println("Character Code Map did not contain " + c);
-					throw new NullPointerException("Couldn't find the code for " + c);
+					inFile.close();
+					throw new NullPointerException("Character Code Map did not contain " + c);
 				}
 				//Loop through the string, writing the bits
 				for (char bit : toWrite.toCharArray()){
@@ -162,7 +164,12 @@ public class HuffmanEncoder {
 		//Make a new comparator
 		TreeComparator comparator = new TreeComparator();
 		//And make a priority queue, using that comparator
-		PriorityQueue<BinaryTree<CharacterFrequencyStore>> pq = new PriorityQueue<BinaryTree<CharacterFrequencyStore>>(charMap.size(), comparator);
+		PriorityQueue<BinaryTree<CharacterFrequencyStore>> pq;
+		try {
+			pq = new PriorityQueue<BinaryTree<CharacterFrequencyStore>>(charMap.size(), comparator);
+		} catch (IllegalArgumentException e) {
+			throw new CustomException("Empty files cannot be compressed, silly");
+		}
 
 		//Go through the frequency map and create trees from them
 		//Add each tree to the priority queue
@@ -227,65 +234,66 @@ public class HuffmanEncoder {
 
 		int place = 0;
 
-		Character previousCharacter = null;
+		int firstInt = compressedFile.read();
+		place++;
+		if (firstInt == -1) {
+			compressedFile.close();
+			decompressedFile.close();
+			throw new CustomException("Empty file");
+		} else if ((char)firstInt != '~') {
+			compressedFile.close();
+			decompressedFile.close();
+			throw new CustomException("File doesn't start");
+		}
+
 		while (true) {
 			int cint = compressedFile.read();
 			place++;
 			if (cint == -1) {
-				//There is nothing left, let's move on!
-				break;
+				//Ran out of file, but we haven't even started decompressing
+				compressedFile.close();
+				decompressedFile.close();
+				throw new CustomException("Unexpected EOF");
 			} else {
-				//Get the character
-				char charA = (char)cint;
+				//cint should be the character, unless we're at the end of the list
+				char character = (char)cint;
 
-				if (charA == '%') {
-					if (!(previousCharacter != null && previousCharacter == '%')) {
-						compressedFile.read();
-						place++; //Increment place
-					}
+				//This should be the first number, unless we're at the end of the list
+				char firstNumber = (char)compressedFile.read();
+				place++;
 
-					char charC = (char)compressedFile.read();
-					char charD = (char)compressedFile.read();
-					char charE = (char)compressedFile.read();
-					place += 3; //Read three times, increment place
+				//If character is - and firstNumber is -, then we're at the end of the list
+				if (character == '-' && firstNumber == '-') break;
 
-					char firstNumberCharacter;
-					Character foundCharacter = null;
-					
-					if (charC == '-' && charD == '-') {
-						//charC, 
-						break;
-					} else {
-						//We know charC is the character
-						foundCharacter = charC;
-						//AKA charF
-						firstNumberCharacter = (char)compressedFile.read();
-						place++; //Increment place
-					}
-					
-					String workingNumber;
-					if (Character.isDigit(firstNumberCharacter)) {
-						workingNumber = "" + firstNumberCharacter;
-					} else {
-						workingNumber = "";
-						throw new FileNotZipException();
-					}
-
-					while (true) {
-						char x = (char)compressedFile.read();
-						place++; //Increment place
-						//TODO check if X is a number instead of what X isn't
-						if (Character.isDigit(x)) workingNumber += (char)x;
-						else break;
-					}
-
-					try {
-						extractedList.add(new CharacterFrequencyStore(Integer.parseInt(workingNumber), foundCharacter));
-					} catch (NumberFormatException e) {
-						throw new FileNotZipException();
-					}
+				//Start constructing the number
+				String workingNumber;
+				if (Character.isDigit(firstNumber)) {
+					workingNumber = "" + firstNumber;
+				} else {
+					compressedFile.close();
+					decompressedFile.close();
+					throw new CustomException("No frequency found for " + character);
 				}
-				previousCharacter = charA;
+
+				while (true) {
+					//Cast the character
+					char x = (char)compressedFile.read();
+					place++; //Increment place
+					//If the character is a digit, add it to our number
+					if (Character.isDigit(x)) workingNumber += (char)x;
+					//We've hit the end of the number sequence, let's get out of here
+					else break;
+				}
+
+				try {
+					//Add to the list a new CFStore object with workingNumber and character
+					extractedList.add(new CharacterFrequencyStore(Integer.parseInt(workingNumber), character));
+				} catch (NumberFormatException e) {
+					//Uh oh, the number was bad
+					compressedFile.close();
+					decompressedFile.close();
+					throw new CustomException("Unable to parse " + workingNumber + "to int");
+				}
 			}
 		}
 
@@ -294,9 +302,12 @@ public class HuffmanEncoder {
 		//And make a priority queue, using that comparator
 		PriorityQueue<BinaryTree<CharacterFrequencyStore>> pq;
 		try {
+			//Make a new priority queue
 			pq = new PriorityQueue<BinaryTree<CharacterFrequencyStore>>(extractedList.size(), comparator);
 		} catch (IllegalArgumentException e) {
-			throw new FileNotZipException();
+			compressedFile.close();
+			decompressedFile.close();
+			throw new CustomException("Unable to construct priority queue");
 		}
 
 		//Go through the frequency map and create trees from them
@@ -311,20 +322,21 @@ public class HuffmanEncoder {
 			pq.add(singletonTree);
 		}
 
+		//generate a frequency tree from the priority queue
 		generateCharacterFrequencyTree(pq);
 
-		//Have to adjust place by one, because it is overstepped one
-		for (int i = 0; i < (place - 1) * 8; i++) {
+		//Adance the compressedFileBit reader to the end of the encoding
+		//8 bits per byte
+		for (int i = 0; i < place * 8; i++) {
 			compressedFileBit.readBit();
 		}
 
 		//Keep track of where in the tree we are
 		BinaryTree<CharacterFrequencyStore> current = freqTree;
 
-		//More looping forever!
+		//More looping
 		while (true) {
 			int bit = compressedFileBit.readBit(); //Read the bit
-			//			System.out.println("Bit: " + bit);
 			if (bit == -1) {
 				//Stop! We've reached the end of the file
 				break;
