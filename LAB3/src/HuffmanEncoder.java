@@ -15,17 +15,20 @@ import java.util.concurrent.atomic.AtomicReference;
 import javax.swing.SwingUtilities;
 
 public class HuffmanEncoder {
-
-	private static BinaryTree<CharacterFrequencyStore> freqTree; 
+	
+	//Store the binary tree used to compress the file
+	private static BinaryTree<CharacterFrequencyStore> freqTree;
+	//Store the compression frequency list. Same data as the binary tree, represented differently
 	private static List<CharacterFrequencyStore> freqListForCompression = new LinkedList<CharacterFrequencyStore>();
 
 	public static void main(String[] args) {
 		String in = "_";
-		while (in != "") {
-			System.out.println("Choose a .txt file to compress, or a .ezip file to decompress");
-			System.out.println("If these file-system calls do not work properly on non-Mac computers");
-			System.out.println("Change main method and use calls to compressFile(in, out) and decompressFile(in, out)");
-			
+
+		System.out.println("Choose a .txt file to compress, or a .ezip file to decompress");
+		System.out.println("If these file-system calls do not work properly on non-Mac computers, then");
+		System.out.println("change main method using calls to compressFile(in, out) and decompressFile(in, out)");
+		
+		while (in != "") {			
 			in = getFilePath();
 			String out;
 			
@@ -55,7 +58,6 @@ public class HuffmanEncoder {
 				} catch (Exception e) {
 					e.printStackTrace();
 				}
-				break;
 			}
 		}
 	}
@@ -218,6 +220,8 @@ public class HuffmanEncoder {
 		BufferedWriter decompressedFile = new BufferedWriter(new FileWriter(pathOut));
 
 		if (freqTree == null) {
+			compressedFileBit.close();
+			decompressedFile.close();
 			throw new CustomException("Can only decompress the same file which I just compressed!");
 		}
 		
