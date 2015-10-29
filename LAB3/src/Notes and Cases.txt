@@ -1,0 +1,23 @@
+==Cases==
+
+Problem : Empty File
+Solution: Does not support compressing empty files
+
+Problem : Single unique character (1 or more occurrences)
+Solution: Write out the number of bits corresponding to the number of occurrences for the character, and recognize that it’s different when decompressing
+
+Problem : Special characters that used in encoding
+Solution: Repeating separators allows identifying which is which
+
+Problem : Huge files
+Solution: This isn’t actually a problem, it just takes longer
+
+==Notes==
+
+If you need to open the .ezip file and cannot, either rename it to a .txt file, or drag & drop it to the app you wish to open it in.
+
+==Tests==
+
+You can find the tests in the tests folder. With the exception of the empty_file folder, each subfolder should contain three files.
+
+If this is the extra credit package, then the compressed files will contain enough information to decompress them.

@@ -1,0 +1,1 @@
+It looks like something is getting lost for these special characters on compression
