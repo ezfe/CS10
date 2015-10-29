@@ -340,12 +340,18 @@ public class HuffmanEncoder {
 			if (bit == -1) {
 				//Stop! We've reached the end of the file
 				break;
-			} else if (bit == 1) {
-				//The bit is 1, move right
-				current = current.getRight();
-			} else if (bit == 0) {
-				//The bit is 0, move left
-				current = current.getLeft();
+			} else if (!freqTree.isLeaf()) {
+				/*
+				 * If the freqTree is a leaf, then there is just one character, and every bit represents that character
+				 * However if it's not a leaf, then we should traverse the tree
+				 */
+				if (bit == 1) {
+					//The bit is 1, move right
+					current = current.getRight();
+				} else if (bit == 0) {
+					//The bit is 0, move left
+					current = current.getLeft();
+				}
 			}
 			//Get the character of the current tree
 			Character character = current.getValue().character;

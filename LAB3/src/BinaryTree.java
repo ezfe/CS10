@@ -333,6 +333,16 @@ public class BinaryTree<E> {
 	}
 	
 	public void traverse(HashMap<Character, String> charCodeMap) {
+		if (getValue() instanceof CharacterFrequencyStore) {
+			CharacterFrequencyStore cfstore = (CharacterFrequencyStore)getValue();
+			if (cfstore.character != null) {
+				//We're assuming there's just character in the tree, because the root node has a character
+				//Which SHOULD NOT happen if there are more characters
+				//So we give it a random state
+				//This doesn't actually matter, but it can't be an empty string, or else we won't preserve the number of characters
+				charCodeMap.put(cfstore.character, "1");
+			}
+		}
 		if (right != null) right.traverse('R', "", charCodeMap);
 		if (left != null) left.traverse('L', "", charCodeMap);
 	}
