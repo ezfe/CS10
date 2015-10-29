@@ -34,16 +34,6 @@ public class HuffmanEncoder {
 			throw e;
 		}
 
-		/*YAY*/
-		List<CharacterFrequencyStore> preList = new LinkedList<CharacterFrequencyStore>();
-		freqTree.preorder(preList);
-		List<CharacterFrequencyStore> inList = new LinkedList<CharacterFrequencyStore>();
-		freqTree.inorder(inList);
-
-		freqTree = BinaryTree.reconstructTree(preList, inList);
-
-		/*END YAY*/
-
 		try {
 			//Let's compress the file using compressFile method!
 			compressFile(in, out);
