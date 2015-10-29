@@ -21,3 +21,5 @@ If you need to open the .ezip file and cannot, either rename it to a .txt file, 
 You can find the tests in the tests folder. With the exception of the empty_file folder, each subfolder should contain three files.
 
 If this is the extra credit package, then the compressed files will contain enough information to decompress them.
+
+I tested the three submitted files, however per instructions I am not including them.
