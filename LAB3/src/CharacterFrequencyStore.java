@@ -1,4 +1,8 @@
-
+/**
+ * Stores a frequency and a character/null
+ * @author Ezekiel Elin
+ *
+ */
 public class CharacterFrequencyStore implements Comparable<Object> {
 	public int frequency;
 	public Character character; //May be null
