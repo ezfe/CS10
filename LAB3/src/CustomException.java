@@ -1,4 +1,8 @@
-
+/**
+ * Custom exception used to send a message
+ * @author Ezekiel Elin
+ *
+ */
 public class CustomException extends Exception {
 
 	/**

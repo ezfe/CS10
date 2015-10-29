@@ -1,6 +1,8 @@
-import java.util.Comparator;
+	import java.util.Comparator;
 
 /**
+ * Used to compare BinaryTrees
+ * 
  * @author Ezekiel Elin
  *
  */
