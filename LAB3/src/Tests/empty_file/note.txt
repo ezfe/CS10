@@ -1,0 +1,1 @@
+this file cannot be compressed, and is gracefully handled with a console message
