@@ -16,7 +16,7 @@ import java.awt.*;
 import java.awt.event.*;
 import javax.swing.*;
 import java.util.Map;
-//import net.datastructures.*;
+import net.datastructures.*;
 
 public class ScrollableMap extends JLabel implements Scrollable, MouseMotionListener, MouseListener {
 
