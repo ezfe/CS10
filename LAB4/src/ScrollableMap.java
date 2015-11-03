@@ -110,6 +110,8 @@ public class ScrollableMap extends JLabel implements Scrollable, MouseMotionList
 
 	// Methods required by the MouseListener interface.
 
+	City a = null;
+	
 	// When the mouse is clicked, find which vertex it's over.
 	// If it's over a vertex and we're finding the source,
 	// record the source, clear the destination, enable the destination
@@ -119,6 +121,14 @@ public class ScrollableMap extends JLabel implements Scrollable, MouseMotionList
 	// to the destination.
 	public void mouseClicked(MouseEvent e) {
 		// YOU FILL THIS IN.
+		Point p = e.getPoint();
+		City b = roadmap.cityAt(p);
+		if (a == null) {
+			a = b;
+		} else {
+			roadmap.dijkstra(a, b);
+			a = null;
+		}
 	}
 
 	public void mousePressed(MouseEvent e) { }
