@@ -112,7 +112,6 @@ public class Interstate extends JPanel {
 	private class SourceButtonListener implements ActionListener {
 		public void actionPerformed(ActionEvent e) {
 			graphicalMap.findSource();
-			destButton.setEnabled(false);
 		}
 	}
 
