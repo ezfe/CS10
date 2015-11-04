@@ -7,6 +7,7 @@
  * for edge weights, and quit.
  * 
  * @author Yu-Han Lyu and Tom Cormen
+ * @author Ezekiel Elin; Adjusted error handling
  */
 
 import java.awt.*;
@@ -53,8 +54,16 @@ public class Interstate extends JPanel {
 		// Get the image to use.
 		ImageIcon interstatesMap = createImageIcon("us-interstates.jpg");
 
+		
 		// Make the representation of the roadmap.
-		RoadMap roadmap = new RoadMap("src/interstate-cities.csv", "src/interstate-links.csv");
+		//We don't have to worry about null, because System.exit() will prevent it being an issue
+		RoadMap roadmap = null;
+		try {
+			roadmap = new RoadMap("src/interstate-cities.csv", "src/interstate-links.csv");
+		} catch (Exception e) {
+			System.err.println(e.getMessage());
+			System.exit(1);
+		}
 
 		// Set up the scroll pane.
 		graphicalMap = new ScrollableMap(interstatesMap, 1, infoLabel, destButton, roadmap);
