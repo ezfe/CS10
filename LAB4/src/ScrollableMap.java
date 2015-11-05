@@ -104,73 +104,90 @@ public class ScrollableMap extends JLabel implements Scrollable, MouseMotionList
 
 		// If shortest paths have not been computed, draw nothing.
 		//Otherwise, draw something
-		if (this.dijkstraResults != null) {
-			int ovalWidth = 12;
+		int ovalWidth = 12;
 
-			if (this.source != null && this.dest == null) {
-				// If shortest paths have been computed and there is not a destination vertex,
-				// draw the entire shortest-path tree.
-				
-				//Grab the predecssor map
-				HashMap<Vertex<City>, Vertex<City>> predMap = this.dijkstraResults.predecessors;
-				//Iterate through it
-				Iterator<Vertex<City>> keyIter = predMap.keySet().iterator();
-				while (keyIter.hasNext()) {
-					Vertex<City> key = keyIter.next();
-					//Connect the cities
-					this.connectCities(key, predMap.get(key), page);
-				}
-			} else if (this.source != null && this.dest != null) {
-				// If shortest paths have been computed and there is a destination vertex, draw
-				// a shortest path from the source vertex to the destination vertex.
-				
-				//Make a new ArrayList of cities
-				ArrayList<Vertex<City>> cities = new ArrayList<Vertex<City>>();
-				//And keep track of the current vertex, starting at the destination vertex
-				Vertex<City> workingVertex = this.dijkstraResults.cityB;
-				while (true) {
-					//Add the vertex to the array list
-					cities.add(workingVertex);
-					//And go to the predecessor
-					workingVertex = this.dijkstraResults.predecessors.get(workingVertex);
-					if (workingVertex == null) {
-						//Break if we're at the end
-						break;
-					}
-				}
+		if (this.source != null && this.dest == null) {
+			// If shortest paths have been computed and there is not a destination vertex,
+			// draw the entire shortest-path tree.
 
-				//Loop through the cities
-				Iterator<Vertex<City>> iter = cities.iterator();
-				Vertex<City> lastCity = null;
-				while (iter.hasNext()) {
-					Vertex<City> thisCity = iter.next();
-					if (lastCity != null) {
-						//Connect the city to the one before it
-						this.connectCities(thisCity, lastCity, page);
-						//Fill an oval (black, smaller) on the city
-						page.fillOval(thisCity.getElement().getLocation().x - ovalWidth / 2, thisCity.getElement().getLocation().y - ovalWidth / 2, ovalWidth, ovalWidth);
-					}
-					lastCity = thisCity;
+			this.dijkstraResults = roadmap.dijkstra(this.source, this.source);
+			infoLabel.setText(this.dijkstraResults.cityA.getElement().getName() + " > Everywhere");
+
+			//Grab the predecssor map
+			HashMap<Vertex<City>, Vertex<City>> predMap = this.dijkstraResults.predecessors;
+			//Iterate through it
+			Iterator<Vertex<City>> keyIter = predMap.keySet().iterator();
+			while (keyIter.hasNext()) {
+				Vertex<City> key = keyIter.next();
+				//Connect the cities
+				this.connectCities(key, predMap.get(key), page);
+			}
+		} else if (this.source != null && this.dest != null) {
+			// If shortest paths have been computed and there is a destination vertex, draw
+			// a shortest path from the source vertex to the destination vertex.
+
+			//Grab the dijkstra results
+			this.dijkstraResults = roadmap.dijkstra(this.source, this.dest);
+
+			//Check if we're using miles or minutes
+			if (roadmap.isUsingDistance()) {
+				//Make a label for miles, rounded to the mile
+				infoLabel.setText(this.dijkstraResults.cityA.getElement().getName() +" > " + this.dijkstraResults.cityB.getElement().getName() + ": " + (int)this.dijkstraResults.shortest + " miles");
+			} else {
+				//Make a label for days:hours:minutes
+				int totalMinutes = (int) this.dijkstraResults.shortest;
+				int totalDays = totalMinutes / 1440;
+				int totalHours = (totalMinutes - (1440 * totalDays)) / 60;
+				int remainingMinutes = (totalMinutes - (1440 * totalDays)) % 60;
+				infoLabel.setText(this.dijkstraResults.cityA.getElement().getName() +" > " + this.dijkstraResults.cityB.getElement().getName() + ": " + (totalDays == 0 ? "" : totalDays + "d") + (totalHours == 0 ? "" : totalHours + "h") + remainingMinutes + "m");
+			}
+
+			//Make a new ArrayList of cities
+			ArrayList<Vertex<City>> cities = new ArrayList<Vertex<City>>();
+			//And keep track of the current vertex, starting at the destination vertex
+			Vertex<City> workingVertex = this.dijkstraResults.cityB;
+			while (true) {
+				//Add the vertex to the array list
+				cities.add(workingVertex);
+				//And go to the predecessor
+				workingVertex = this.dijkstraResults.predecessors.get(workingVertex);
+				if (workingVertex == null) {
+					//Break if we're at the end
+					break;
 				}
-				
-				//Turn off the destination button
-				this.destButton.setEnabled(false);
 			}
-			
-			//Fill ovals for source and destination
-			ovalWidth = 15;
-			if (this.source != null) {
-				page.setColor(Color.GREEN);
-				page.fillOval(this.source.getLocation().x - ovalWidth / 2, this.source.getLocation().y - ovalWidth / 2, ovalWidth, ovalWidth);
+
+			//Loop through the cities
+			Iterator<Vertex<City>> iter = cities.iterator();
+			Vertex<City> lastCity = null;
+			while (iter.hasNext()) {
+				Vertex<City> thisCity = iter.next();
+				if (lastCity != null) {
+					//Connect the city to the one before it
+					this.connectCities(thisCity, lastCity, page);
+					//Fill an oval (black, smaller) on the city
+					page.fillOval(thisCity.getElement().getLocation().x - ovalWidth / 2, thisCity.getElement().getLocation().y - ovalWidth / 2, ovalWidth, ovalWidth);
+				}
+				lastCity = thisCity;
 			}
-			if (this.dest != null) {
-				page.setColor(Color.RED);
-				page.fillOval(this.dest.getLocation().x - ovalWidth / 2, this.dest.getLocation().y - ovalWidth / 2, ovalWidth, ovalWidth);
-			}
-			
-			//Set the color back to black
-			page.setColor(Color.BLACK);
+
+			//Turn off the destination button
+			this.destButton.setEnabled(false);
 		}
+
+		//Fill ovals for source and destination
+		ovalWidth = 15;
+		if (this.source != null) {
+			page.setColor(Color.GREEN);
+			page.fillOval(this.source.getLocation().x - ovalWidth / 2, this.source.getLocation().y - ovalWidth / 2, ovalWidth, ovalWidth);
+		}
+		if (this.dest != null) {
+			page.setColor(Color.RED);
+			page.fillOval(this.dest.getLocation().x - ovalWidth / 2, this.dest.getLocation().y - ovalWidth / 2, ovalWidth, ovalWidth);
+		}
+
+		//Set the color back to black
+		page.setColor(Color.BLACK);
 
 		page2D.setStroke(oldStroke);    // restore the saved stroke
 	}
@@ -206,21 +223,6 @@ public class ScrollableMap extends JLabel implements Scrollable, MouseMotionList
 			destButton.setEnabled(true);
 			this.source = b;
 			this.dest = null;
-		}
-		if (this.source != null && this.dest != null) {
-			this.dijkstraResults = roadmap.dijkstra(this.source, this.dest);
-			if (roadmap.isUsingDistance()) {
-				infoLabel.setText(this.dijkstraResults.cityA.getElement().getName() +" > " + this.dijkstraResults.cityB.getElement().getName() + ": " + this.dijkstraResults.shortest + " miles");
-			} else {
-				int totalMinutes = (int) this.dijkstraResults.shortest;
-				int totalDays = totalMinutes / 1440;
-				int totalHours = (totalMinutes - (1440 * totalDays)) / 60;
-				int remainingMinutes = (totalMinutes - (1440 * totalDays)) % 60;
-				infoLabel.setText(this.dijkstraResults.cityA.getElement().getName() +" > " + this.dijkstraResults.cityB.getElement().getName() + ": " + totalDays + "d" + totalHours + "h" + remainingMinutes + "m");
-			}
-		} else if (this.source != null) {
-			this.dijkstraResults = roadmap.dijkstra(this.source, this.source);
-			infoLabel.setText(this.dijkstraResults.cityA.getElement().getName() + " > Everywhere");
 		}
 
 		this.repaint();
@@ -310,12 +312,14 @@ public class ScrollableMap extends JLabel implements Scrollable, MouseMotionList
 	// for edge weights, and finds and draws shortest paths.
 	public void useTime() {
 		roadmap.useTime();
+		repaint();
 	}
 
 	// Called when the distance button is pressed.  Tells the roadmap to use distance
 	// for edge weights, and finds and draws shortest paths.
 	public void useDistance() {
 		roadmap.useDistance();
+		repaint();
 	}
 
 	private void connectCities(Vertex<City> a, Vertex<City> b, Graphics page) {
