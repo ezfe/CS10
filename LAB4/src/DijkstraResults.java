@@ -15,5 +15,6 @@ public class DijkstraResults {
 	//Map of predecessors
 	public HashMap<Vertex<City>, Vertex<City>> predecessors = null;
 	//Shortest path
-	public double shortest = Double.POSITIVE_INFINITY;
+	public double distance = Double.POSITIVE_INFINITY;
+	public double time = Double.POSITIVE_INFINITY;
 }

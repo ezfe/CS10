@@ -119,9 +119,10 @@ public class RoadMap {
 	 * Perform Dijkstra's algorithm (public facing)
 	 * @param a Origin city
 	 * @param b Destination city (can be equal to origin)
+	 * @param recompute Should the algorithm be run again
 	 * @return Information gathered from the algorthm
 	 */
-	public DijkstraResults dijkstra(City a, City b) {
+	public DijkstraResults dijkstra(City a, City b, boolean recompute) {		
 		//To store the vertices for a and b in
 		Vertex<City> vA = null;
 		Vertex<City> vB = null;
@@ -144,8 +145,9 @@ public class RoadMap {
 		}
 
 		//Perform dijkstra (private)
-		dijkstra(vA);
-
+		if (recompute)
+			dijkstra(vA);
+		
 		//Make a new results box
 		DijkstraResults box = new DijkstraResults();
 		//Store the cities
@@ -154,7 +156,13 @@ public class RoadMap {
 		//Store the backpath
 		box.predecessors = shortestPathPred;
 		//Store the shortest path from vB to vA
-		box.shortest = distances.get(vB);
+		if (useDistance) {
+			box.distance = distances.get(vB);
+			box.time = alternativeDistances.get(vB);
+		} else {
+			box.time = distances.get(vB);
+			box.distance = alternativeDistances.get(vB);
+		}
 
 		//Return the box
 		return box;
@@ -162,8 +170,11 @@ public class RoadMap {
 
 	//Instance variables to store data from dijkstra shortest path algorithm
 	//Used in multiple methods, cleared() when algorithm is run 
+	//A third map is used to store the other distance. For example, if minutes are the important value,
+	//Then altDist will contain the miles
 	HashMap<Vertex<City>, Vertex<City>> shortestPathPred = new HashMap<Vertex<City>, Vertex<City>>();
 	HashMap<Vertex<City>, Double> distances = new HashMap<Vertex<City>, Double>();
+	HashMap<Vertex<City>, Double> alternativeDistances = new HashMap<Vertex<City>, Double>();
 
 	/**
 	 * Perform dijkstra algorithm
@@ -183,12 +194,14 @@ public class RoadMap {
 			Vertex<City> v = vertIter.next();
 			//Add the vertice to the distances map, with ∞[Infinity] being the distance
 			distances.put(v, Double.POSITIVE_INFINITY);
+			alternativeDistances.put(v, Double.POSITIVE_INFINITY);
 			//And add it to the queue
 			queue.add(v);
 		}		
 
 		//We know the origin is at a distance of 0 from the origin, so we set it thusly
 		distances.put(a, 0.0);
+		alternativeDistances.put(a, 0.0);
 
 		//While the queue isn't empty, loop through
 		while (!queue.isEmpty()) {
@@ -215,18 +228,24 @@ public class RoadMap {
 	private void relax(Vertex<City> u, Vertex<City> v, PriorityQueue<Vertex<City>> queue) {
 		//Get the distance between u and v
 		double distance;
+		double altDist;
 		if (useDistance) {
 			//If we're using distance, use the distance
-			distance = mapGraph.getEdge(u, v).getElement().getDistance();
+			Highway h = mapGraph.getEdge(u, v).getElement();
+			distance = h.getDistance();
+			altDist = h.getTotalMinutes();
 		} else {
 			//Otherwise, the "distance" is actually minutes
-			distance = mapGraph.getEdge(u, v).getElement().getTotalMinutes();
+			Highway h = mapGraph.getEdge(u, v).getElement();
+			altDist = h.getDistance();
+			distance = h.getTotalMinutes();
 		}
 
 		//If the distance of u + (u,v) is smaller than the distance of v
 		if (distances.get(u) + distance < distances.get(v)) {
 			//Update the distance of v to this new shorter distance
 			distances.put(v, distances.get(u) + distance);
+			alternativeDistances.put(v, alternativeDistances.get(u) + altDist);
 			//Shuffle the queue
 			queue.remove(v);
 			queue.add(v);

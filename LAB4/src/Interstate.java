@@ -28,7 +28,6 @@ public class Interstate extends JPanel {
 		JPanel selectionPanel = new JPanel();
 		JButton sourceButton = new JButton("Source");
 		destButton = new JButton("Destination");
-		destButton.setEnabled(false);     // disabled until there is a source vertex
 		JButton distButton = new JButton("Use distance");
 		JButton timeButton = new JButton("Use time");
 		selectionPanel.add(sourceButton);
