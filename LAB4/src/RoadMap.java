@@ -168,14 +168,24 @@ public class RoadMap {
 		return box;
 	}
 
-	//Instance variables to store data from dijkstra shortest path algorithm
-	//Used in multiple methods, cleared() when algorithm is run 
-	//A third map is used to store the other distance. For example, if minutes are the important value,
-	//Then altDist will contain the miles
+	/*
+	 * Instance variables to store data from dijkstra shortest path algorithm
+	 * Used in multiple methods, cleared() when algorithm is run
+	 * A third map is used to store the other distance. For example, if minutes are the important value,
+	 * Then altDist will contain the miles
+	 * 
+	 * The reason I am using more than one map is because of the complications arising trying to store it in a class object.
+	 * Because JAVA does not support language features like tuples I have decided the best solution is to use three HashMaps
+	 * In an ideal world it would be easier to implement these, however I have neither the time nor the energy to reimplement
+	 * a fully working impelemention for the sake of removing two hashmaps.
+	 * 
+	 * Additionally I'd like to point out that this program experiences the most "lag" when you scroll, but not due to dijkstras.
+	 * In fact, turning off dijkstras shows no noticeable speed changes.
+	 */
 	HashMap<Vertex<City>, Vertex<City>> shortestPathPred = new HashMap<Vertex<City>, Vertex<City>>();
 	HashMap<Vertex<City>, Double> distances = new HashMap<Vertex<City>, Double>();
 	HashMap<Vertex<City>, Double> alternativeDistances = new HashMap<Vertex<City>, Double>();
-
+	
 	/**
 	 * Perform dijkstra algorithm
 	 * @param a origin Vertex<City>
@@ -302,5 +312,20 @@ public class RoadMap {
 	 */
 	public Edge<Highway> highwayBetweenCities(Vertex<City> a, Vertex<City> b) {
 		return mapGraph.getEdge(a, b);
+	}
+	
+	/**
+	 * Returns a city for anyone to use
+	 * There are no specifications for which city will be returned
+	 * It is only required to be a city on the map
+	 * @return a City that appears on the map
+	 */
+	public City origin() {
+		Iterator<Vertex<City>> iter = this.mapGraph.vertices().iterator();
+		if (iter.hasNext()) {
+			return iter.next().getElement();
+		} else {
+			return null;
+		}
 	}
 }

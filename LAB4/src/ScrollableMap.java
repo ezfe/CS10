@@ -24,6 +24,9 @@ import java.util.HashMap;
 
 public class ScrollableMap extends JLabel implements Scrollable, MouseMotionListener, MouseListener {
 
+	//Used to make the program run at a tolerable speed–helpful for debugging and testing
+	private static final boolean ACTUALLY_USEABLE_MODE = false;
+
 	private static final long serialVersionUID = 1L;
 	private DijkstraResults dijkstraResults;
 
@@ -32,7 +35,6 @@ public class ScrollableMap extends JLabel implements Scrollable, MouseMotionList
 	private int maxUnitIncrement = 1;         // increment for scrolling by dragging
 	private boolean missingPicture = false;   // do we have an image to display?
 	private JLabel infoLabel;                 // where to display the result, in words
-	private JButton destButton;               // the destination button, so that it can be enabled
 	private RoadMap roadmap;                  // the roadmap
 
 	// ADD OTHER INSTANCE VARIABLES AS NEEDED.
@@ -70,7 +72,6 @@ public class ScrollableMap extends JLabel implements Scrollable, MouseMotionList
 		}
 		maxUnitIncrement = m;
 		this.infoLabel = infoLabel;
-		this.destButton = destButton;
 		this.roadmap = roadmap;
 
 		// Let the user scroll by dragging to outside the window.
@@ -99,7 +100,8 @@ public class ScrollableMap extends JLabel implements Scrollable, MouseMotionList
 	public void paintComponent(Graphics page) {
 		Graphics2D page2D = (Graphics2D) page;
 		setRenderingHints(page2D);
-		super.paintComponent(page2D);
+		if (!ACTUALLY_USEABLE_MODE)
+			super.paintComponent(page2D);
 		Stroke oldStroke = page2D.getStroke();  // save the current stroke
 		page2D.setStroke(new BasicStroke(5.0f, BasicStroke.CAP_BUTT,
 				BasicStroke.JOIN_MITER));
@@ -108,12 +110,19 @@ public class ScrollableMap extends JLabel implements Scrollable, MouseMotionList
 
 		// If shortest paths have not been computed, draw nothing.
 		//Otherwise, draw something
-		if (this.source != null && this.dest == null) {
+		if (this.dest == null && (this.source != null || ScrollableMap.ACTUALLY_USEABLE_MODE)) {
 			// If shortest paths have been computed and there is not a destination vertex,
 			// draw the entire shortest-path tree.
 
-			if (sourceChange) {
-				this.dijkstraResults = roadmap.dijkstra(this.source, this.source, true);
+			City usedSource;
+			if (this.source == null) {
+				usedSource = roadmap.origin();
+			} else {
+				usedSource = this.source;
+			}
+
+			if (sourceChange || (ScrollableMap.ACTUALLY_USEABLE_MODE && this.source == null)) {
+				this.dijkstraResults = roadmap.dijkstra(usedSource, usedSource, true);
 				sourceChange = false;
 			}
 
@@ -141,49 +150,55 @@ public class ScrollableMap extends JLabel implements Scrollable, MouseMotionList
 				destinationChange = false;
 			}
 
-			int totalMinutes = (int) this.dijkstraResults.time;
-			int totalDays = totalMinutes / 1440;
-			int totalHours = (totalMinutes - (1440 * totalDays)) / 60;
-			int remainingMinutes = (totalMinutes - (1440 * totalDays)) % 60;
-			String timeString = (totalDays == 0 ? "" : totalDays + "d ") + (totalHours == 0 ? "" : totalHours + "h ") + remainingMinutes + "m";
+			if (this.dijkstraResults.distance != Double.POSITIVE_INFINITY) {
 
-			String distanceString = "" + (int)this.dijkstraResults.distance + " miles";
+				int totalMinutes = (int) this.dijkstraResults.time;
+				int totalDays = totalMinutes / 1440;
+				int totalHours = (totalMinutes - (1440 * totalDays)) / 60;
+				int remainingMinutes = (totalMinutes - (1440 * totalDays)) % 60;
+				String timeString = (totalDays == 0 ? "" : totalDays + "d ") + (totalHours == 0 ? "" : totalHours + "h ") + remainingMinutes + "m";
 
-			String usingString = this.roadmap.isUsingDistance() ? "Distance" : "Time";
-			
-			//Make a label
-			infoLabel.setText(this.dijkstraResults.cityA.getElement().getName() +" > " + this.dijkstraResults.cityB.getElement().getName() + ": " + distanceString + " in " + timeString + " (Best " + usingString + ")");
+				String distanceString = "" + (int)this.dijkstraResults.distance + " miles";
 
-			//Make a new ArrayList of cities
-			ArrayList<Vertex<City>> cities = new ArrayList<Vertex<City>>();
-			//And keep track of the current vertex, starting at the destination vertex
-			Vertex<City> workingVertex = this.dijkstraResults.cityB;
-			while (true) {
-				//Add the vertex to the array list
-				cities.add(workingVertex);
-				//And go to the predecessor
-				workingVertex = this.dijkstraResults.predecessors.get(workingVertex);
-				if (workingVertex == null) {
-					//Break if we're at the end
-					break;
+				String usingString = this.roadmap.isUsingDistance() ? "Distance" : "Time";
+
+				//Make a label
+				infoLabel.setText(this.dijkstraResults.cityA.getElement().getName() +" > " + this.dijkstraResults.cityB.getElement().getName() + ": " + distanceString + " in " + timeString + " (Best " + usingString + ")");
+
+				//Make a new ArrayList of cities
+				ArrayList<Vertex<City>> cities = new ArrayList<Vertex<City>>();
+				//And keep track of the current vertex, starting at the destination vertex
+				Vertex<City> workingVertex = this.dijkstraResults.cityB;
+				while (true) {
+					//Add the vertex to the array list
+					cities.add(workingVertex);
+					//And go to the predecessor
+					workingVertex = this.dijkstraResults.predecessors.get(workingVertex);
+					if (workingVertex == null) {
+						//Break if we're at the end
+						break;
+					}
 				}
-			}
 
-			//Loop through the cities
-			Iterator<Vertex<City>> iter = cities.iterator();
-			Vertex<City> lastCity = null;
-			while (iter.hasNext()) {
-				Vertex<City> thisCity = iter.next();
-				if (lastCity != null) {
-					//Connect the city to the one before it
-					this.connectCities(thisCity, lastCity, page);
-					//Fill an oval (black, smaller) on the city
-					page.fillOval(thisCity.getElement().getLocation().x - ovalWidth / 2, thisCity.getElement().getLocation().y - ovalWidth / 2, ovalWidth, ovalWidth);
+				//Loop through the cities
+				Iterator<Vertex<City>> iter = cities.iterator();
+				Vertex<City> lastCity = null;
+				while (iter.hasNext()) {
+					Vertex<City> thisCity = iter.next();
+					if (lastCity != null) {
+						//Connect the city to the one before it
+						this.connectCities(thisCity, lastCity, page);
+						//Fill an oval (black, smaller) on the city
+						page.fillOval(thisCity.getElement().getLocation().x - ovalWidth / 2, thisCity.getElement().getLocation().y - ovalWidth / 2, ovalWidth, ovalWidth);
+					}
+					lastCity = thisCity;
 				}
-				lastCity = thisCity;
+			} else {
+				infoLabel.setText("Unable to travel from " + this.dijkstraResults.cityA.getElement().getName() +" to " + this.dijkstraResults.cityB.getElement().getName());
 			}
 		} else {
 			this.infoLabel.setText("No source");
+
 		}
 
 		//Fill ovals for source and destination
@@ -228,22 +243,23 @@ public class ScrollableMap extends JLabel implements Scrollable, MouseMotionList
 		Point p = e.getPoint();
 		City b = roadmap.cityAt(p);
 		if (this.lookingFor == ScrollableMap.LOOKINGFOR_DEST) {
-			//The destination has changed
-			destinationChange = true;
-
 			//Don't let the user click the source as the destination
-			if (this.dest == b)
+			if (this.dest == b) {
+				destinationChange = true;
 				this.dest = null;
-			else if (this.source != b)
+			} else if (this.source != b && b != null) {
+				destinationChange = true;
 				this.dest = b;
+			}
 		} else if (this.lookingFor == ScrollableMap.LOOKINGFOR_SOURCE) {
-			//The source has changed, so we need to recompute dijkstra
-			sourceChange = true;
-
-			if (this.source == b)
+			//Don't let the user click the destination as the source
+			if (this.source == b) {
+				sourceChange = true;
 				this.source = null;
-			else if (this.dest != b)
+			} else if (this.dest != b && b != null) {
+				sourceChange = true;
 				this.source = b;
+			}
 		}
 
 		this.repaint();
