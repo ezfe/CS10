@@ -52,15 +52,26 @@ public class MyArrayListMap implements MyMapADT {
 
 	@Override
 	public String toString() {
-		String ret = "{\n    ";
+		//TODO get rid of this crap
+//		String ret = "{\n    ";
+//		Iterator<ArrayListItem> iter = data.iterator();
+//		while (iter.hasNext()) {
+//			ArrayListItem next = iter.next();
+//			ret += next.k + ": " + next.v;
+//			if (iter.hasNext())
+//				ret += ",\n    ";
+//		}
+//		ret += "\n}";
+//		return ret;
+		
+		String ret = "";
 		Iterator<ArrayListItem> iter = data.iterator();
 		while (iter.hasNext()) {
-			ArrayListItem next = iter.next();
-			ret += next.k + ": " + next.v;
-			if (iter.hasNext())
-				ret += ",\n    ";
+			ret += iter.next().k;
+			if (iter.hasNext()) {
+				ret += ", ";
+			}
 		}
-		ret += "\n}";
 		return ret;
 	}
 
