@@ -8,7 +8,7 @@ import java.util.Random;
 public class MyMapDriver {
 	private static final boolean DEBUG = false; // true to print the map after each insert and delete
 	private static final boolean PERFORM_DELETIONS = true; // set to false if delete is not implemented
-	private static final String WHICH_IMPLEMENTATION = "ArrayList"; // "ArrayList", "Hash", "BST", "AVL" are the possibilities
+	private static final String WHICH_IMPLEMENTATION = "Hash"; // "ArrayList", "Hash", "BST", "AVL" are the possibilities
 	private static final String KEY_SOURCE = "fixed"; // "fixed", "random", "worstcase" are the possibilities
 	private static final int[] KEYS_TO_INSERT = { 40, 20, 80, 100, 40, 20, 120, 60, 50, 10, 200}; // these keys are inserted if KEY_SOURCE is set to "fixed"
 	private static final int[] KEYS_TO_DELETE = { 200, 100, 1, 40, 20, 80, 100, 10, 200 }; // these keys are deleted if KEY_SOURCE is set to "fixed"
@@ -19,15 +19,27 @@ public class MyMapDriver {
 
 	public static void main(String[] args) {
 		MyMapADT map = null;
+		
+//		map = new MyHashMap();
+//		map.insert(1,11);
+//		map.insert(2,22);
+//		map.insert(3,33);
+//		map.insert(4,44);
+//		System.out.println(map);
+//		map.insert(5,55);
+//		map.insert(6,66);
+//		map.insert(7,77);
+//		System.out.println(map);
+//		System.out.println(map.size());
+		
 		if (WHICH_IMPLEMENTATION == "ArrayList")
 			map = new MyArrayListMap();
-		//TODO Finish this
-//		else if (WHICH_IMPLEMENTATION == "Hash")
-//			map = new MyHashMap();
-//		else if (WHICH_IMPLEMENTATION == "BST")
-//			map = new MyBSTMap();
-//		else
-//			map = new MyAVLMap();
+		else if (WHICH_IMPLEMENTATION == "Hash")
+			map = new MyHashMap();
+		else if (WHICH_IMPLEMENTATION == "BST")
+			map = new MyBSTMap();
+		else
+			map = new MyAVLMap();
 
 		long tStart = System.nanoTime(); // start time
 

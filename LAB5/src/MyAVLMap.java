@@ -1,5 +1,5 @@
 
-public class MyAVLMap implements MyMapADT {
+public class MyAVLMap extends MyBSTMap implements MyMapADT {
 
 	@Override
 	public boolean insert(int k, int v) {
