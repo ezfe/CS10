@@ -43,7 +43,7 @@ public class MyHashMap implements MyMapADT {
 		HASH_B = rand.nextInt(HASH_P);
 	}
 
-	private void rehash() {		
+	private void rehash() {
 		if (this.load() <= .5)
 			return;
 
@@ -194,17 +194,24 @@ public class MyHashMap implements MyMapADT {
 		return size;
 	}
 
+	/**
+	 * the first line displays the hash function (for example, as "h(k) = ((5k+3) mod 13) mod 11"),
+	 * and each subsequent line is of the form "i: k1 k2 k3" where i is a slot number and k1, k2, k3
+	 * are the keys in that slot. For compactness of display, include a slot only if it is nonempty.
+	 */
 	public String toString() {
-		String out = "";
+		String out = "h(k) = ((" + HASH_A + " * k + " + HASH_B + ") % " + HASH_P + ") % " + data.length + "\n";
 		if (data != null) {
 			for (int i = 0; i < data.length; i++) {
 				ListItem e = data[i];
 				if (e != null) {
-					out += e.k + ": " + e.v + ", ";
+					out += i + ":\t";
+					out += "(" + e.k + ", " + e.v + "), ";
 					while (e.hasNext()) {
 						e = e.next;
-						out += e.k + ": " + e.v + ", ";
+						out += "(" + e.k + ", " + e.v + "), ";
 					}
+					out += "\n";
 				}
 			}
 		}

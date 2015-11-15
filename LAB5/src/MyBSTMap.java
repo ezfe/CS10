@@ -2,66 +2,126 @@
 public class MyBSTMap implements MyMapADT {
 
 	private Node root;
-	private Node sentinel; //TODO: Sentinel?
+	private Node sentinel;
 
 	public MyBSTMap() {
 		this.sentinel = new Node();
 		this.root = sentinel;
 	}
 
+	/**
+	 * See MyMapADT.java for details
+	 * Citation:
+	 * 	This method is derived from / based on the lecture notes' implementation of a Binary Search Tree
+	 */
 	@Override
 	public boolean insert(int k, int v) {
-		Node inserted = new Node(k, v);
-
+		//Keep references to the working node
 		Node node = root;
+		//And it's parent
+		//- We cannot use `node.parent`, because
+		//  if node becomes sentinel, the parent reference
+		//  will be null, which is useless
 		Node nodeParent = sentinel;
 
-		if (nodeParent == sentinel) {
-			root = inserted;
-		} else {
-			while (node != sentinel) {
-				if (k < node.key) {
-					node = node.left;
-				} else {
-					node = node.right;
-				}
+		//Continue until node is the sentinel
+		//When this condition is true, nodeParent will be
+		//The leaf that references the sentinel
+		while (node != sentinel) {
+			//Set the parent to the current node
+			nodeParent = node;
+			if (k < node.key) {
+				//`k` should go to the left of `node`
+				node = node.getLeft();
+			} else if (k > node.key) {
+				//`k` should go to the right of `node`
+				node = node.getRight();
+			} else if (k == node.key) {
+				//The node already exists, so we simply update its value
+				node.value = v;
+				//Return false because the node already exists
+				return false;
 			}
-
-			//node = sentinel
+		}
+		
+		//Create the new node
+		Node inserted = new Node(k, v);
+		
+		//If the prent is the sentinel, then the tree hasn't been constructed yet
+		if (nodeParent == sentinel) {
+			//Set the root to inserted (would have been sentinel previously)
+			root = inserted;
+			//Return true because we have just inserted a new node
+			return true;
+		} else {
+			//node is sentinel
 			//nodeParent is one above that
+			
 			if (k < nodeParent.key) {
-				nodeParent.left = inserted;
+				//`k` goes left of `nodeParent`
+				
+				//Set the left child of nodeParent to inserted
+				nodeParent.setLeft(inserted);
+				//Return true because we have just inserted a new node
+				return true;
 			} else {
-				nodeParent.right = inserted;
+				//`k` goes right of `nodeParent`
+				
+				//Set the right child of nodeParent to inserted
+				nodeParent.setRight(inserted);
+				//Return true because we have just inserted a new node
+				return true;
+			}
+		}
+	}
+
+	/**
+	 * See MyMapADT.java for details
+	 */
+	@Override
+	public RetVal find(int k) {
+		Node node = root;
+
+		while (node != sentinel && node.key != k) {
+			if (k < node.key) {
+				node = node.left;
+			} else {
+				node = node.right;
 			}
 		}
 
-		return false;
+		if (sentinel == node) {
+			return new RetVal(false, 0);
+		} else {
+			return new RetVal(true, node.value);
+		}
 	}
 
-	@Override
-	public RetVal find(int k) {
-		// TODO Auto-generated method stub
-		return null;
-	}
-
+	/**
+	 * See MyMapADT.java for details
+	 */
 	@Override
 	public int size() {
-		// TODO Auto-generated method stub
-		return 0;
+		return this.root.size();
 	}
 
+	/**
+	 * Stores an instance of a node in the tree
+	 * @author Ezekiel Elin
+	 */
 	private class Node {
-		//TODO: Protected??
-
 		/*
 		 * Getting sick and tired of java's lousy access
 		 * control. I apparently got too used to Swift
 		 */
+		
+		//Stores the key and relavent value associated with the node
+		//Uses Integer instead of int to facilitate creation of sentinel node
 		protected Integer key;
 		protected Integer value;
 
-		protected Node left, right;
+		//Keep references to left, right, and parent nodes
+		private Node left, right;
 		protected Node parent;
 
 		protected int height;
@@ -75,6 +135,12 @@ public class MyBSTMap implements MyMapADT {
 			this.height = -1;
 		}
 
+		public int size() {
+			if (this == sentinel)
+				return 0;
+			return this.getRight().size() + this.getLeft().size() + 1;
+		}
+
 		public Node(int key, int value) {
 			this.key = key;
 			this.value = value;
@@ -84,6 +150,85 @@ public class MyBSTMap implements MyMapADT {
 			this.left = sentinel;
 			this.right = sentinel;
 		}
+
+		public void updateParentHeights() {
+			if (this.parent != sentinel && this.parent.height <= this.height) {
+				this.parent.height = this.height + 1;
+				this.parent.updateParentHeights();
+			}
+		}
+		
+		/**
+		 * Sets the node's right child
+		 * Does NOT modifiy the nodes parent. The caller MUST do that
+		 * @param r node to set as the right child
+		 */
+		public void setRightWithNoParentModification(Node r) {
+			this.right = r;
+		}
+		
+		/**
+		 * Sets the node's left child
+		 * Does NOT modifiy the nodes parent. The caller MUST do that
+		 * @param l node to set as the left child
+		 */
+		public void setLeftWithNoParentModification(Node l) {
+			this.left = l;
+		}
+		
+		/**
+		 * Sets the node's right child
+		 * Will update parent links. Do NOT use if
+		 * control over those links is needed
+		 * @param r node to set as the right child
+		 */
+		public void setRight(Node r) {
+			if (r == null) return;
+
+			this.setRightWithNoParentModification(r);
+			r.parent = this;
+			r.updateParentHeights();
+		}
+
+		/**
+		 * Sets the node's left child
+		 * Will update parent links. Do NOT use if
+		 * control over those links is needed
+		 * @param l node to set as the left child
+		 */
+		public void setLeft(Node l) {
+			if (l == null) return;
+
+			this.setLeftWithNoParentModification(l);
+			l.parent = this;
+			l.updateParentHeights();
+		}
+
+		/**
+		 * Get the right child
+		 * @return the right child node
+		 */
+		public Node getRight() {
+			return this.right;
+		}
+
+		/**
+		 * Get the left child
+		 * @return the left child node
+		 */
+		public Node getLeft() {
+			return this.left;
+		}
+
+		/**
+		 * Convert this node to a string
+		 * Current includes the height as a third value printed
+		 * As such:
+		 * 	{K, V (H)}
+		 */
+		public String toString() {
+			return "{" + this.key + ", " + this.value + " (" + this.height + ")}";
+		}
 	}
 
 	/**
@@ -91,22 +236,31 @@ public class MyBSTMap implements MyMapADT {
 	 * per the project requirements
 	 */
 	@Override
-	public RetVal delete(int k) { return null; }
+	public RetVal delete(int k) {
+		System.err.println(">>Unimplemented method called<<\nplease remove calls of BST/AVL .delete()"); 
+		return null;
+	}
+
 
 	/*
-	 * Following methods taken from lecture notes
+	 * All printing methods (toString, indent, and print) are sourced from the lecture notes'
+	 * implementation of a binary search tree.
+	 * 
+	 * Minor modifications were made to support additional requirements in Lab 5:
+	 * 	printing tree size
 	 */
-
+	
 	/**
 	 * Return a String representation of this BST, indenting each level by two
 	 * spaces. Right subtrees appear before subtree roots, which appear before
 	 * left subtrees, so that when viewed sideways, we see the BST structure.
 	 */
 	public String toString() {
+		int size = this.size();
 		if (root == sentinel)
-			return "";
+			return "Size: " + size;
 		else
-			return print(root, 0);
+			return "Size: " + size + "\n" + print(root, 0);
 	}
 
 	/**
@@ -130,7 +284,7 @@ public class MyBSTMap implements MyMapADT {
 		if (x == sentinel)
 			return "";
 		else
-			return print(x.right, depth + 1) + indent(depth) + x.toString() + "\n"
+			return print(x.getRight(), depth + 1) + indent(depth) + x.toString() + "\n"
 			+ print(x.left, depth + 1);
 	}
 
