@@ -2,19 +2,21 @@ import java.util.Random;
 
 public class MyHashMap implements MyMapADT {
 
+	//Initial data length of 11 is used
+	//Use `data.length` to get current length
 	private static final int INITIAL_LENGTH = 11;
+	
+	
 	private ListItem[] data;
 
+	//Store the a, b, and p values of the hash functions
 	private int HASH_A;
 	private int HASH_B;
 	private static final int HASH_P = 109345121;
 
 	public MyHashMap() {
-		super();
-
-		//TODO: Make sure [0,a) not [.,.] or (.,.)
 		Random rand = new Random();
-
+		
 		//We need [1,p-1] so I take [0, p-1], turn it to {[0, p-2] + 1}, or [1, p - 1]
 		HASH_A = rand.nextInt(HASH_P - 1) + 1;
 		//We need [0, p-1]
@@ -23,16 +25,32 @@ public class MyHashMap implements MyMapADT {
 		data = new ListItem[INITIAL_LENGTH];
 	}
 
+	/**
+	 * Get the index for the key
+	 * @param k key to hash
+	 * @return hash of key (index)
+	 */
 	private int hash(int k) {
 		//Converting to a long to prevent issues
 		//Then convert back to an int, because we don't actually have a long after it finishes
 		return (int) (( (long) HASH_A * k + HASH_B) % MyHashMap.HASH_P) % data.length;
 	}
 
+	/**
+	 * Get the load of the tree. This is the number of nodes divided by the length of the data list
+	 * @return load of the tree
+	 */
 	private double load() {
 		return (double)this.size() / data.length;
 	}
 
+	/**
+	 * Re-randomize the hash numbers
+	 * 
+	 * *WARNING*
+	 * If this method is called and the tree is not reconstructed immediately thereafter,
+	 * the tree will become inaccessible except by manual traversal
+	 */
 	private void reroll() {
 		//TODO: Make sure [0,a) not [.,.] or (.,.)
 		Random rand = new Random();
@@ -43,36 +61,39 @@ public class MyHashMap implements MyMapADT {
 		HASH_B = rand.nextInt(HASH_P);
 	}
 
+	/**
+	 * Reconstruct the seed and create new hash numbers
+	 */
 	private void rehash() {
+		System.out.println(this.load());
+		
+		//Check the tree load is more than .5
 		if (this.load() <= .5)
 			return;
-
+		
+		//Create new hash numbers
 		reroll();
 
+		//Store the current data
 		ListItem[] current = data;
+		//Recreate data as a list twice as long
 		data = new ListItem[current.length * 2];
 
+		//Loop through the old data
 		for (int i = 0; i < current.length; i++) {
 			ListItem element = current[i];
 			if (element == null)
+				//If the entry is null, it has no information
 				continue;
-			while (true) {
+			
+			do {
+				//Reinsert the element
 				this.insert(element.k, element.v, true);
+				
 				if (element.hasNext()) {
 					element = element.next;
-				} else {
-					/*
-					 * Yes I know I'm not "supposed" to use while(true) however I believe
-					 * it is the best impelemention. The issue is that in a do{}while loop
-					 * the while condition must be true at the end, not the beginning. Because
-					 * of this, setting element to element.next can make the second while condition false, causing issues.
-					 * 
-					 * In constrast, in a while{} loop, the first element wouldn't be properly scanned because the while loop
-					 * checks before starting its work
-					 */
-					break;
 				}
-			}
+			} while (element.hasNext());
 		}
 	}
 
@@ -88,19 +109,16 @@ public class MyHashMap implements MyMapADT {
 		int hashedKey = hash(k);
 		if (data[hashedKey] != null) {
 			ListItem element = data[hashedKey];
-			while (true) {
+			
+			do {
 				if (element.k == k) {
 					element.v = v;
 					return false;
 				} else if (element.hasNext()) {
 					element = element.next;
-				} else {
-					/*
-					 * See my comments in delete() about using while(true) loops
-					 */
-					break;
 				}
-			}
+			} while (element.hasNext());
+			
 			ListItem insert = new ListItem(k, v);
 			insert.next = data[hashedKey];
 			data[hashedKey].previous = insert;
@@ -118,18 +136,13 @@ public class MyHashMap implements MyMapADT {
 		int hashedKey = hash(k);
 		if (data[hashedKey] != null) {
 			ListItem element = data[hashedKey];
-			while (true) {
+			do {
 				if (element.k == k) {
 					return new RetVal(true, element.v);
 				} else if (element.hasNext()) {
 					element = element.next;
-				} else {
-					/*
-					 * See my comments in delete() about using a while(true) loop
-					 */
-					break;
 				}
-			}
+			} while (element.hasNext());
 		}
 		return new RetVal(false, 0);
 	}
@@ -139,7 +152,7 @@ public class MyHashMap implements MyMapADT {
 		int hashedKey = hash(k);
 		if (data[hashedKey] != null) {
 			ListItem element = data[hashedKey];
-			while (true) {
+			do {
 				if (element.k == k) {
 					if (element.isFirst()) {
 						//If the element is the first in the list, delete it and make the next element the first
@@ -159,35 +172,27 @@ public class MyHashMap implements MyMapADT {
 					break;
 				} else if (element.hasNext()) {
 					element = element.next;
-				} else {
-					/*
-					 * Yes I know I'm not "supposed" to use while(true) however I believe
-					 * it is the best impelemention. The issue is that in a do{}while loop
-					 * the while condition must be true at the end, not the beginning. Because
-					 * of this, setting element to element.next can make the second while condition false, causing issues.
-					 * 
-					 * In constrast, in a while{} loop, the first element wouldn't be properly scanned because the while loop
-					 * checks before starting its work
-					 */
-					break;
 				}
-			}
+			} while (element.hasNext());
 		}
 		return null;
 	}
 
 	@Override
 	public int size() {
+		//Start with a size of zero
 		int size = 0;
+		
 		if (data != null) {
+			//Loop through the items in data
 			for (int i = 0; i < data.length; i++) {
+				//Grab the item
 				ListItem e = data[i];
 				if (e != null) {
-					size++;
-					while (e.hasNext()) {
-						e = e.next;
+					do {
 						size++;
-					}
+						e = e.next;
+					} while (e != null);
 				}
 			}
 		}
@@ -200,7 +205,7 @@ public class MyHashMap implements MyMapADT {
 	 * are the keys in that slot. For compactness of display, include a slot only if it is nonempty.
 	 */
 	public String toString() {
-		String out = "h(k) = ((" + HASH_A + " * k + " + HASH_B + ") % " + HASH_P + ") % " + data.length + "\n";
+		String out = this.size() + "\nh(k) = ((" + HASH_A + " * k + " + HASH_B + ") % " + HASH_P + ") % " + data.length + "\n";
 		if (data != null) {
 			for (int i = 0; i < data.length; i++) {
 				ListItem e = data[i];
