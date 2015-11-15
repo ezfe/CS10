@@ -1,8 +1,8 @@
 
 public class MyBSTMap implements MyMapADT {
 
-	private Node root;
-	private Node sentinel;
+	protected Node root;
+	protected Node sentinel;
 
 	public MyBSTMap() {
 		this.sentinel = new Node();
@@ -16,6 +16,10 @@ public class MyBSTMap implements MyMapADT {
 	 */
 	@Override
 	public boolean insert(int k, int v) {
+		return p_insert(k, v, true).didCreate();
+	}
+	
+	protected InsertData p_insert(int k, int v, boolean updateHeights) {
 		//Keep references to the working node
 		Node node = root;
 		//And it's parent
@@ -40,7 +44,7 @@ public class MyBSTMap implements MyMapADT {
 				//The node already exists, so we simply update its value
 				node.value = v;
 				//Return false because the node already exists
-				return false;
+				return new InsertData(false, node);
 			}
 		}
 
@@ -52,7 +56,7 @@ public class MyBSTMap implements MyMapADT {
 			//Set the root to inserted (would have been sentinel previously)
 			root = inserted;
 			//Return true because we have just inserted a new node
-			return true;
+			return new InsertData(true, inserted);
 		} else {
 			//node is sentinel
 			//nodeParent is one above that
@@ -61,16 +65,22 @@ public class MyBSTMap implements MyMapADT {
 				//`k` goes left of `nodeParent`
 
 				//Set the left child of nodeParent to inserted
-				nodeParent.setLeft(inserted);
+				if (updateHeights)
+					nodeParent.setLeft(inserted);
+				else
+					nodeParent.setLeftWithNoParentModification(inserted);
 				//Return true because we have just inserted a new node
-				return true;
+				return new InsertData(true, inserted);
 			} else {
 				//`k` goes right of `nodeParent`
 
 				//Set the right child of nodeParent to inserted
-				nodeParent.setRight(inserted);
+				if (updateHeights)
+					nodeParent.setRight(inserted);
+				else
+					nodeParent.setRightWithNoParentModification(inserted);
 				//Return true because we have just inserted a new node
-				return true;
+				return new InsertData(true, inserted);
 			}
 		}
 	}
@@ -114,7 +124,7 @@ public class MyBSTMap implements MyMapADT {
 	 * Stores an instance of a node in the tree
 	 * @author Ezekiel Elin
 	 */
-	private class Node {
+	protected class Node {
 		/*
 		 * Getting sick and tired of java's lousy access
 		 * control. I apparently got too used to Swift
@@ -181,14 +191,40 @@ public class MyBSTMap implements MyMapADT {
 		 * Update the heights of this node's parent
 		 */
 		public void updateParentHeights() {
-			if (this.parent != sentinel && this.parent.height <= this.height) {
+			if (!this.parent.hasCorrectHeight()) {
 				//The parent is not a sentinel, and its height needs to be changed (<=)
 				this.parent.height = this.height + 1;
 				//Now we tell the parent to do the same for its parents (if needed)
 				this.parent.updateParentHeights();
 			}
 		}
+		
+		/**
+		 * Updates the height of this Node
+		 */
+		public void updateHeight() {
+			this.height = Math.max(this.getRight().height, this.getRight().height) + 1;
+		}
 
+		/**
+		 * Check if this node's height is correct
+		 * @return
+		 */
+		public boolean hasCorrectHeight() {
+			if (this == sentinel)
+				return true;
+			return Math.max(this.getRight().height, this.getRight().height) + 1 == this.height;
+		}
+		
+		/**
+		 * Checks if THIS node is balanced
+		 * Does not check down the tree
+		 * @return node is balanced
+		 */
+		public boolean isBalanced() {
+			return Math.abs(this.getRight().height - this.getLeft().height) <= 1;
+		}
+		
 		/**
 		 * Sets the node's right child
 		 * Does NOT modifiy the nodes parent. The caller MUST do that
@@ -319,4 +355,18 @@ public class MyBSTMap implements MyMapADT {
 			+ print(x.left, depth + 1);
 	}
 
+	protected class InsertData {
+		private boolean created;
+		private Node inserted;
+		public InsertData(boolean c, Node i) {
+			this.created = c;
+			this.inserted = i;
+		}
+		public boolean didCreate() {
+			return this.created;
+		}
+		public Node getInserted() {
+			return this.inserted;
+		}
+	}
 }

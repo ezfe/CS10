@@ -1,28 +1,43 @@
 
 public class MyAVLMap extends MyBSTMap implements MyMapADT {
 
-	@Override
-	public boolean insert(int k, int v) {
-		// TODO Auto-generated method stub
-		return false;
-	}
-
-	@Override
-	public RetVal find(int k) {
-		// TODO Auto-generated method stub
-		return null;
-	}
-
-	@Override
-	public int size() {
-		// TODO Auto-generated method stub
-		return 0;
-	}
-
 	/**
-	 * This method is not implemeneted
-	 * per the project requirements
+	 * See MyMapADT.java for details
 	 */
 	@Override
-	public RetVal delete(int k) { return null; }
+	protected InsertData p_insert(int k, int v, boolean updateHeights) {
+		InsertData insertData = super.p_insert(k, v, false);
+
+		System.out.println(this.root);
+		
+		Node z = insertData.getInserted();
+		
+		while (z != sentinel) {
+			if (z.hasCorrectHeight()) {
+				System.out.println("Reached " + z);
+				break;
+			} else {
+				z.updateHeight();
+				if (z.isBalanced()) {
+					z = z.parent;
+				} else {
+					balance(z);
+				}
+			}
+		}
+		
+		return insertData;
+	}
+	
+	/**
+	 * Balances the tree around Node z
+	 * @param z node to balance around
+	 */
+	private void balance(Node z) {
+		
+	}
+	
+	public void leftRotate(Node a) {
+		Node b = a.getRight();
+	}
 }
