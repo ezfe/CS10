@@ -68,7 +68,7 @@ public class MyBSTMap implements MyMapADT {
 				if (updateHeights)
 					nodeParent.setLeft(inserted);
 				else
-					nodeParent.setLeftWithNoParentModification(inserted);
+					nodeParent.setLeftWithNoParentHeightModification(inserted);
 				//Return true because we have just inserted a new node
 				return new InsertData(true, inserted);
 			} else {
@@ -78,7 +78,7 @@ public class MyBSTMap implements MyMapADT {
 				if (updateHeights)
 					nodeParent.setRight(inserted);
 				else
-					nodeParent.setRightWithNoParentModification(inserted);
+					nodeParent.setRightWithNoParentHeightModification(inserted);
 				//Return true because we have just inserted a new node
 				return new InsertData(true, inserted);
 			}
@@ -203,7 +203,7 @@ public class MyBSTMap implements MyMapADT {
 		 * Updates the height of this Node
 		 */
 		public void updateHeight() {
-			this.height = Math.max(this.getRight().height, this.getRight().height) + 1;
+			this.height = Math.max(this.getRight().height, this.getLeft().height) + 1;
 		}
 
 		/**
@@ -213,7 +213,7 @@ public class MyBSTMap implements MyMapADT {
 		public boolean hasCorrectHeight() {
 			if (this == sentinel)
 				return true;
-			return Math.max(this.getRight().height, this.getRight().height) + 1 == this.height;
+			return Math.max(this.getRight().height, this.getLeft().height) + 1 == this.height;
 		}
 		
 		/**
@@ -225,24 +225,36 @@ public class MyBSTMap implements MyMapADT {
 			return Math.abs(this.getRight().height - this.getLeft().height) <= 1;
 		}
 		
+		public Node heaviestChild() {
+			if (this.getRight().height > this.getLeft().height) {
+				return this.getRight();
+			} else if (this.getLeft().height > this.getRight().height) {
+				return this.getLeft();
+			} else {
+				return null;
+			}
+		}
+		
 		/**
 		 * Sets the node's right child
-		 * Does NOT modifiy the nodes parent. The caller MUST do that
+		 * Does NOT modifiy the parent's height. The caller MUST do that
 		 * @param r node to set as the right child
 		 */
-		public void setRightWithNoParentModification(Node r) {
+		public void setRightWithNoParentHeightModification(Node r) {
 			this.right = r;
+			r.parent = this;
 		}
 
 		/**
 		 * Sets the node's left child
-		 * Does NOT modifiy the nodes parent. The caller MUST do that
+		 * Does NOT modifiy the parent's height. The caller MUST do that
 		 * @param l node to set as the left child
 		 */
-		public void setLeftWithNoParentModification(Node l) {
+		public void setLeftWithNoParentHeightModification(Node l) {
 			this.left = l;
+			l.parent = this;
 		}
-
+		
 		/**
 		 * Sets the node's right child
 		 * Will update parent links. Do NOT use if
@@ -252,7 +264,7 @@ public class MyBSTMap implements MyMapADT {
 		public void setRight(Node r) {
 			if (r == null) return;
 
-			this.setRightWithNoParentModification(r);
+			this.setRightWithNoParentHeightModification(r);
 			r.parent = this;
 			r.updateParentHeights();
 		}
@@ -266,7 +278,7 @@ public class MyBSTMap implements MyMapADT {
 		public void setLeft(Node l) {
 			if (l == null) return;
 
-			this.setLeftWithNoParentModification(l);
+			this.setLeftWithNoParentHeightModification(l);
 			l.parent = this;
 			l.updateParentHeights();
 		}
@@ -286,7 +298,7 @@ public class MyBSTMap implements MyMapADT {
 		public Node getLeft() {
 			return this.left;
 		}
-
+		
 		/**
 		 * Convert this node to a string
 		 * Current includes the height as a third value printed
