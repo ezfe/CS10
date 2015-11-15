@@ -16,10 +16,17 @@ public class MyBSTMap implements MyMapADT {
 	 */
 	@Override
 	public boolean insert(int k, int v) {
-		return p_insert(k, v, true).didCreate();
+		return insert(k, v, true).didCreate();
 	}
 	
-	protected InsertData p_insert(int k, int v, boolean updateHeights) {
+	/**
+	 * Performs the task designated by insert(k, v) with an extra parameter and corresponding function
+	 * @param k key to insert
+	 * @param v value to insert
+	 * @param updateHeights should the node heights be updated
+	 * @return the inserted node and wether a new node was created
+	 */
+	protected InsertData insert(int k, int v, boolean updateHeights) {
 		//Keep references to the working node
 		Node node = root;
 		//And it's parent
@@ -330,6 +337,26 @@ public class MyBSTMap implements MyMapADT {
 	 */
 
 	/**
+	 * Holds the information from the p_insert method
+	 * @author Ezekiel Elin
+	 */
+	protected class InsertData {
+		private boolean created;
+		private Node inserted;
+		
+		public InsertData(boolean c, Node i) {
+			this.created = c;
+			this.inserted = i;
+		}
+		public boolean didCreate() {
+			return this.created;
+		}
+		public Node getInserted() {
+			return this.inserted;
+		}
+	}
+	
+	/**
 	 * Return a String representation of this BST, indenting each level by two
 	 * spaces. Right subtrees appear before subtree roots, which appear before
 	 * left subtrees, so that when viewed sideways, we see the BST structure.
@@ -365,20 +392,5 @@ public class MyBSTMap implements MyMapADT {
 		else
 			return print(x.getRight(), depth + 1) + indent(depth) + x.toString() + "\n"
 			+ print(x.left, depth + 1);
-	}
-
-	protected class InsertData {
-		private boolean created;
-		private Node inserted;
-		public InsertData(boolean c, Node i) {
-			this.created = c;
-			this.inserted = i;
-		}
-		public boolean didCreate() {
-			return this.created;
-		}
-		public Node getInserted() {
-			return this.inserted;
-		}
 	}
 }
