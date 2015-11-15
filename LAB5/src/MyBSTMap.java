@@ -43,10 +43,10 @@ public class MyBSTMap implements MyMapADT {
 				return false;
 			}
 		}
-		
+
 		//Create the new node
 		Node inserted = new Node(k, v);
-		
+
 		//If the prent is the sentinel, then the tree hasn't been constructed yet
 		if (nodeParent == sentinel) {
 			//Set the root to inserted (would have been sentinel previously)
@@ -56,17 +56,17 @@ public class MyBSTMap implements MyMapADT {
 		} else {
 			//node is sentinel
 			//nodeParent is one above that
-			
+
 			if (k < nodeParent.key) {
 				//`k` goes left of `nodeParent`
-				
+
 				//Set the left child of nodeParent to inserted
 				nodeParent.setLeft(inserted);
 				//Return true because we have just inserted a new node
 				return true;
 			} else {
 				//`k` goes right of `nodeParent`
-				
+
 				//Set the right child of nodeParent to inserted
 				nodeParent.setRight(inserted);
 				//Return true because we have just inserted a new node
@@ -119,7 +119,7 @@ public class MyBSTMap implements MyMapADT {
 		 * Getting sick and tired of java's lousy access
 		 * control. I apparently got too used to Swift
 		 */
-		
+
 		//Stores the key and relavent value associated with the node
 		//Uses Integer instead of int to facilitate creation of sentinel node
 		protected Integer key;
@@ -156,7 +156,7 @@ public class MyBSTMap implements MyMapADT {
 			this.value = value;
 
 			this.height = 0;
-			
+
 			//Parent, left, and right are all sentinel by default
 			//Caller must set these if they wish to change them
 			this.parent = sentinel;
@@ -172,7 +172,7 @@ public class MyBSTMap implements MyMapADT {
 			if (this == sentinel)
 				//Sentinel has a size of zero, because it doesn't count
 				return 0;
-			
+
 			//Return the sum of the left and right sides
 			return this.getRight().size() + this.getLeft().size() + 1;
 		}
@@ -188,7 +188,7 @@ public class MyBSTMap implements MyMapADT {
 				this.parent.updateParentHeights();
 			}
 		}
-		
+
 		/**
 		 * Sets the node's right child
 		 * Does NOT modifiy the nodes parent. The caller MUST do that
@@ -197,7 +197,7 @@ public class MyBSTMap implements MyMapADT {
 		public void setRightWithNoParentModification(Node r) {
 			this.right = r;
 		}
-		
+
 		/**
 		 * Sets the node's left child
 		 * Does NOT modifiy the nodes parent. The caller MUST do that
@@ -206,7 +206,7 @@ public class MyBSTMap implements MyMapADT {
 		public void setLeftWithNoParentModification(Node l) {
 			this.left = l;
 		}
-		
+
 		/**
 		 * Sets the node's right child
 		 * Will update parent links. Do NOT use if
@@ -280,7 +280,7 @@ public class MyBSTMap implements MyMapADT {
 	 * Minor modifications were made to support additional requirements in Lab 5:
 	 * 	printing tree size
 	 */
-	
+
 	/**
 	 * Return a String representation of this BST, indenting each level by two
 	 * spaces. Right subtrees appear before subtree roots, which appear before

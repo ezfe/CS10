@@ -97,40 +97,73 @@ public class MyHashMap implements MyMapADT {
 		}
 	}
 
+
+	/**
+	 * See MyMapADT.java for details
+	 */
 	@Override
 	public boolean insert(int k, int v) {
 		return this.insert(k, v, false);
 	}
 
+
+	/**
+	 * Performs the functions designated in the specification for insert()
+	 * with one additional feature which helps prevents infinite recursion
+	 * 
+	 * The hashing functino uses insert to recreate the array. insert does
+	 * call the hashing function. Due to the risk of infinite hashing, or
+	 * the risk of the two functions interfering, a simple check is used to
+	 * prevent the hashing function from being triggered by the hashing function
+	 */
 	public boolean insert(int k, int v, boolean origin_hash) {
 		if (!origin_hash)
 			this.rehash();
 
+		//Hash `k` into an index
 		int hashedKey = hash(k);
+		
 		if (data[hashedKey] != null) {
+			//There is already an item at the list
+			
+			//Grab the item
 			ListItem element = data[hashedKey];
 			
+			//Loop through the items at that index
 			do {
 				if (element.k == k) {
+					//If we find the item with the desired index
+					//Then we update it's value
 					element.v = v;
+					//And return false because we didn't create a new node
 					return false;
 				} else if (element.hasNext()) {
 					element = element.next;
 				}
 			} while (element.hasNext());
 			
+			//We need to add the item somewhere, so
+			//We create a new item
 			ListItem insert = new ListItem(k, v);
+			//and add it at the beginning
 			insert.next = data[hashedKey];
 			data[hashedKey].previous = insert;
-
 			data[hashedKey] = insert;
+			//And return true
 			return true;
 		} else {
+			//There is nothing at the index
+			//So we create a new node, store it
+			//and return true
 			data[hashedKey] = new ListItem(k, v);
 			return true;
 		}
 	}
 
+
+	/**
+	 * See MyMapADT.java for details
+	 */
 	@Override
 	public RetVal find(int k) {
 		int hashedKey = hash(k);
@@ -147,6 +180,9 @@ public class MyHashMap implements MyMapADT {
 		return new RetVal(false, 0);
 	}
 
+	/**
+	 * See MyMapADT.java for details
+	 */
 	@Override
 	public RetVal delete(int k) {
 		int hashedKey = hash(k);
@@ -178,6 +214,9 @@ public class MyHashMap implements MyMapADT {
 		return null;
 	}
 
+	/**
+	 * See MyMapADT.java for details
+	 */
 	@Override
 	public int size() {
 		//Start with a size of zero
@@ -198,11 +237,12 @@ public class MyHashMap implements MyMapADT {
 		}
 		return size;
 	}
-
+	
 	/**
 	 * the first line displays the hash function (for example, as "h(k) = ((5k+3) mod 13) mod 11"),
 	 * and each subsequent line is of the form "i: k1 k2 k3" where i is a slot number and k1, k2, k3
 	 * are the keys in that slot. For compactness of display, include a slot only if it is nonempty.
+	 * @return String representing the object
 	 */
 	public String toString() {
 		String out = this.size() + "\nh(k) = ((" + HASH_A + " * k + " + HASH_B + ") % " + HASH_P + ") % " + data.length + "\n";
