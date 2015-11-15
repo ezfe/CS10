@@ -82,7 +82,9 @@ public class MyBSTMap implements MyMapADT {
 	public RetVal find(int k) {
 		Node node = root;
 
+		//Traverse the tree
 		while (node != sentinel && node.key != k) {
+			//Going left and right as appropriate
 			if (k < node.key) {
 				node = node.left;
 			} else {
@@ -91,8 +93,10 @@ public class MyBSTMap implements MyMapADT {
 		}
 
 		if (sentinel == node) {
+			//the node is the sentinel, we reached the end without finding it
 			return new RetVal(false, 0);
 		} else {
+			//We found the node
 			return new RetVal(true, node.value);
 		}
 	}
@@ -102,6 +106,7 @@ public class MyBSTMap implements MyMapADT {
 	 */
 	@Override
 	public int size() {
+		//Return the size of the tree referenced by root
 		return this.root.size();
 	}
 
@@ -124,36 +129,62 @@ public class MyBSTMap implements MyMapADT {
 		private Node left, right;
 		protected Node parent;
 
+		//Height of the node
 		protected int height;
 
+		/**
+		 * Create a sentinel node
+		 */
 		public Node() {
+			//Set everything to null
 			this.key = this.value = null;
 			this.parent = null;
 			this.left = null;
 			this.right = null;
 
+			//Sentinels have a height of -1
 			this.height = -1;
 		}
 
-		public int size() {
-			if (this == sentinel)
-				return 0;
-			return this.getRight().size() + this.getLeft().size() + 1;
-		}
-
+		/**
+		 * Create a node
+		 * @param key for the new node
+		 * @param value for the new node
+		 */
 		public Node(int key, int value) {
 			this.key = key;
 			this.value = value;
 
 			this.height = 0;
+			
+			//Parent, left, and right are all sentinel by default
+			//Caller must set these if they wish to change them
 			this.parent = sentinel;
 			this.left = sentinel;
 			this.right = sentinel;
 		}
 
+		/**
+		 * Get the size of the node
+		 * @return the size of the node
+		 */
+		public int size() {
+			if (this == sentinel)
+				//Sentinel has a size of zero, because it doesn't count
+				return 0;
+			
+			//Return the sum of the left and right sides
+			return this.getRight().size() + this.getLeft().size() + 1;
+		}
+
+		/**
+		 * Update the heights of this node's parent
+		 */
 		public void updateParentHeights() {
 			if (this.parent != sentinel && this.parent.height <= this.height) {
+				//The parent is not a sentinel, and its height needs to be changed (<=)
 				this.parent.height = this.height + 1;
+				//Now we tell the parent to do the same for its parents (if needed)
 				this.parent.updateParentHeights();
 			}
 		}
