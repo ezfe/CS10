@@ -52,7 +52,6 @@ public class MyHashMap implements MyMapADT {
 	 * the tree will become inaccessible except by manual traversal
 	 */
 	private void reroll() {
-		//TODO: Make sure [0,a) not [.,.] or (.,.)
 		Random rand = new Random();
 
 		//We need [1,p-1] so I take [0, p-1], turn it to {[0, p-2] + 1}, or [1, p - 1]
@@ -65,8 +64,6 @@ public class MyHashMap implements MyMapADT {
 	 * Reconstruct the seed and create new hash numbers
 	 */
 	private void rehash() {
-		System.out.println(this.load());
-		
 		//Check the tree load is more than .5
 		if (this.load() <= .5)
 			return;

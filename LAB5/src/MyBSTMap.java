@@ -198,7 +198,7 @@ public class MyBSTMap implements MyMapADT {
 		 * Update the heights of this node's parent
 		 */
 		public void updateParentHeights() {
-			if (!this.parent.hasCorrectHeight()) {
+			if (!this.parent.hasCorrectHeight() && this.parent != sentinel && this != sentinel) {
 				//The parent is not a sentinel, and its height needs to be changed (<=)
 				this.parent.height = this.height + 1;
 				//Now we tell the parent to do the same for its parents (if needed)

@@ -8,11 +8,11 @@ import java.util.Random;
 public class MyMapDriver {
 	private static final boolean DEBUG = false; // true to print the map after each insert and delete
 	private static final boolean PERFORM_DELETIONS = false; // set to false if delete is not implemented
-	private static final String WHICH_IMPLEMENTATION = "AVL"; // "ArrayList", "Hash", "BST", "AVL" are the possibilities
-	private static final String KEY_SOURCE = "fixed"; // "fixed", "random", "worstcase" are the possibilities
+	private static final String WHICH_IMPLEMENTATION = "Hash"; // "ArrayList", "Hash", "BST", "AVL" are the possibilities
+	private static final String KEY_SOURCE = "worstcase"; // "fixed", "random", "worstcase" are the possibilities
 	private static final int[] KEYS_TO_INSERT = { 40, 20, 80, 100, 40, 20, 120, 60, 50, 10, 200}; // these keys are inserted if KEY_SOURCE is set to "fixed"
 	private static final int[] KEYS_TO_DELETE = { 200, 100, 1, 40, 20, 80, 100, 10, 200 }; // these keys are deleted if KEY_SOURCE is set to "fixed"
-	private static final int NUM_TO_INSERT = 200000; // number of keys that we attempt to insert when KEY_SOURCE is "random" or "worstcase"
+	private static final int NUM_TO_INSERT = 1000000; // number of keys that we attempt to insert when KEY_SOURCE is "random" or "worstcase"
 	private static final int NUM_TO_DELETE = NUM_TO_INSERT; // number of keys that we attempt to delete when KEY_SOURCE is "random" or "worstcase"
 	private static final int R1 = 10 * NUM_TO_INSERT; // [0,1,...,R1-1] is the range from which a random key is picked and inserted
 	private static final int R2 = R1; // [0,1,...,R2-1] is the range from which a random key is picked and deleted

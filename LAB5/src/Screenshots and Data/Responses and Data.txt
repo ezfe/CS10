@@ -1,0 +1,152 @@
+==============================================================================
+
+For the ArrayList and Hash implementations, set DEBUG to false, KEY_SOURCE to "fixed", do not suppress Deletes, and take a screenshot of the output.
+
+[see ArrayList-Fixed.png]
+[see      Hash-Fixed.png]
+
+For the BST and AVL implementations, set DEBUG to false, KEY_SOURCE to "fixed", suppress Deletes, and take a screenshot of the output.
+
+[see BST-Fixed.png]
+[see AVL-Fixed.png]
+
+==============================================================================
+
+For each of the four implementations, set DEBUG to false, KEY_SOURCE to "worstcase", suppress Deletes, and set NUM_TO_INSERT successively to 3125, 6250, 12500, 25000, 50000, 100000, 200000. Tabulate all results, but show the screen shots for only the last case of 200000.
+
+[see ArrayList-Worst-200000.png]
+[see      Hash-Worst-200000.png]
+[see       BST-Worst-200000.png]
+[see       AVL-Worst-200000.png]
+
+ArrayList
+- 200000	39,832ms
+- 100000	 8,830ms
+- 50000		 2,092ms
+- 25000		   631ms
+- 12500		   257ms
+- 6250		    93ms
+- 3125		    34ms
+
+Hash
+- 200000	242,300ms
+- 100000	 39,315ms
+- 50000		  6,949ms
+- 25000		  1,374ms
+- 12500		    356ms
+- 6250		    104ms
+- 3125		     40ms
+
+BST
+- 200000	449,913ms
+- 100000	 96,064ms
+- 50000		 21,846ms
+- 25000		  4,657ms
+- 12500		  1,089ms
+- 6250		    300ms
+- 3125		    104ms
+
+AVL
+- 200000	130ms
+- 100000	101ms
+- 50000		 62ms
+- 25000		129ms
+- 12500		 28ms
+- 6250		 17ms
+- 3125		 13ms
+
+==============================================================================
+
+For each of the four implementations, set DEBUG to false, set KEY_SOURCE to "random", suppress Deletes, and NUM_TO_INSERT successively to 25000, 50000, 100000, 200000. Tabulate all results, but show the screen shots for only the last case of 200000.
+
+[see ArrayList-Random-200000.png]
+[see      Hash-Random-200000.png]
+[see       BST-Random-200000.png]
+[see       AVL-Random-200000.png]
+
+ArrayList
+- 200000	126,538ms
+- 100000	 28,584ms
+- 50000		  4,791ms
+- 25000		  1,024ms
+
+Hash
+- 200000	310,076ms
+- 100000	 58,956ms
+- 50000		 15,005ms
+- 25000		  3,345ms
+
+BST
+- 200000	269ms
+- 100000	171ms
+- 50000		109ms
+- 25000		 45ms
+
+AVL
+- 200000	422ms
+- 100000	262ms
+- 50000		108ms
+- 25000		 86ms
+
+==============================================================================
+
+For the AVL implementation, set DEBUG to false, set KEY_SOURCE to "worstcase", suppress Deletes, and set NUM_TO_INSERT to successively to 100000, 100000, 10000000, 100000000. Tabulate all results, but show the screen shots for only the last case of 100000000. Estimate the time taken by the BST implementation for the final case of 100000000. Explain how you arrived at the estimate.
+
+[see AVL-Worst-100000000.png]
+
+- 100000000	182,559ms
+- 10000000	 15,803ms
+- 1000000	    511ms
+- 100000	    121ms
+
+To estimate the BST times, I first plotted all the relevant points in a graphing program**, then I attempted to find the best-fit line for the data.
+
+The equation I came up with is t=((x/350)^2)/.75
+
+t=((200000/350)^2)/.75 = 435,374ms, which matches 449,913ms from the REAL data.
+
+t=((100000000/350)^2)/.75 = 108,843,537,412ms, which is >3.4 years<
+
+==============================================================================
+
+For each of Hash, BST, and AVL implementations, set DEBUG to false, KEY_SOURCE to "worstcase", suppress Deletes, and set NUM_TO_INSERT successively to 100000, 100000, 1000000, 5000000. Tabulate all results, but show the screen shots for only the last case of 5000000. Is your BST running faster than AVL? If yes, why might this be? If no, why might that be?
+
+[see Hash-Worst-100000.png]*
+[see  BST-Worst-100000.png]*
+[see AVL-Worst-5000000.png]
+
+Hash
+- 5000000	* (estimate: 148,654,675ms see Hash-Graph.png for equation)
+- 1000000	* (estimate:   5,946,187ms see Hash-Graph.png for equation)
+- 100000	42,253ms
+- 10000		348ms
+
+BST
+- 5000000	* (estimate: 272,108,843ms see BST-Graph.png for equation)
+- 1000000	* (estimate:  10,884,353ms see BST-Graph.png for equation)
+- 100000	100,654ms
+- 10000		740ms
+
+AVL
+- 5000000	7,651ms
+- 1000000	825ms
+- 100000	124ms
+- 10000		41ms
+
+My AVL is running faster than my BST. I presume this is because as the tree grows to very large sizes, the shorter height means it runs faster.
+
+I suspect my BST may not be implemented with the best efficiency, and if this is the case, and if the BST does run faster if properly implemented, then I would suspect it’s due to the increasingly complex re-arrangements that must occur with the AVL tree.
+
+==============================================================================
+
+*
+I was NOT ABLE to compute these times because they simply took too long. I left the Hash-5000000 running for two hours with no completion. Because of this I included the screenshots from the largest quantity that I did collect (100000) for BST and Hash. I did not have this issue with the AVL trees.
+
+As of the time of submission, I am currently running Hash-1000000. I will leave this running no later than Midnight tonight (Sunday).
+
+==============================================================================
+
+**
+You can see a screenshot of my graph and equation, BST-Graph.png
+
+==============================================================================
