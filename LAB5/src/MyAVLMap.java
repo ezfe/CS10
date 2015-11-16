@@ -1,3 +1,8 @@
+/**
+ * MyAVLMap.java
+ * @author Ezekiel Elin
+ * Implements MyMapADT as an AVL Tree
+ */
 
 public class MyAVLMap extends MyBSTMap implements MyMapADT {
 

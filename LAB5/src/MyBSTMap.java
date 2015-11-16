@@ -1,3 +1,8 @@
+/**
+ * MyBSTMap.java
+ * @author Ezekiel Elin
+ * Implements MyMapADT as a BST 
+ */
 
 public class MyBSTMap implements MyMapADT {
 

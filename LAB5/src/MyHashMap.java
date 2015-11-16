@@ -1,5 +1,9 @@
 import java.util.Random;
-
+/**
+ * MyHashMap.java
+ * @author Ezekiel Elin
+ * Implements MyMapADT as a HashMap
+ */
 public class MyHashMap implements MyMapADT {
 
 	//Initial data length of 11 is used
